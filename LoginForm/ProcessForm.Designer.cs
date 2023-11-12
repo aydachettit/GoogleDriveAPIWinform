@@ -107,6 +107,7 @@
             // 
             // btnBack
             // 
+            this.btnBack.Enabled = false;
             this.btnBack.Location = new System.Drawing.Point(373, 106);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(75, 23);
@@ -127,7 +128,7 @@
             // 
             // btnHome
             // 
-            this.btnHome.Location = new System.Drawing.Point(0, 106);
+            this.btnHome.Location = new System.Drawing.Point(202, 106);
             this.btnHome.Name = "btnHome";
             this.btnHome.Size = new System.Drawing.Size(75, 23);
             this.btnHome.TabIndex = 5;
@@ -141,18 +142,18 @@
             this.RecoverMenu,
             this.deletePermanentToolStripMenuItem});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(169, 48);
             // 
             // RecoverMenu
             // 
             this.RecoverMenu.Name = "RecoverMenu";
-            this.RecoverMenu.Size = new System.Drawing.Size(180, 22);
+            this.RecoverMenu.Size = new System.Drawing.Size(168, 22);
             this.RecoverMenu.Text = "Recover";
             // 
             // deletePermanentToolStripMenuItem
             // 
             this.deletePermanentToolStripMenuItem.Name = "deletePermanentToolStripMenuItem";
-            this.deletePermanentToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deletePermanentToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.deletePermanentToolStripMenuItem.Text = "Delete Permanent";
             this.deletePermanentToolStripMenuItem.Click += new System.EventHandler(this.deletePermanentToolStripMenuItem_Click);
             // 
