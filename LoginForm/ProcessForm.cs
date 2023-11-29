@@ -109,6 +109,7 @@ namespace LoginForm
         
         private void ProcessForm_Load(object sender, EventArgs e)
         {
+            cmbFileTyle.SelectedItem = "All";
             //timer.Start();
         }
         private void Timer_Tick(object sender, EventArgs e)
@@ -514,6 +515,29 @@ namespace LoginForm
                 }
 
             }
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            IList<Google.Apis.Drive.v3.Data.File> files = apiService.SearchFile(service, new Model.SearchFileParams {FileName = this.txtSearchFileName.Text, FileType = this.cmbFileTyle.Text});
+            loadFileFromDrive(files);
+        }
+
+        private void cmbFileTyle_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cmbOrderFiled_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            IList<Google.Apis.Drive.v3.Data.File> files = apiService.SearchFile(service, new Model.SearchFileParams { FileName = this.txtSearchFileName.Text, FileType = this.cmbFileTyle.Text,SortBy= this.cmbOrderFiled.Text,SortType= cmbOrderType.Text });
+            loadFileFromDrive(files);
+        }
+
+        private void cmbOrderType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            IList<Google.Apis.Drive.v3.Data.File> files = apiService.SearchFile(service, new Model.SearchFileParams { FileName = this.txtSearchFileName.Text, FileType = this.cmbFileTyle.Text, SortBy = this.cmbOrderFiled.Text, SortType = cmbOrderType.Text });
+            loadFileFromDrive(files);
         }
     }
 

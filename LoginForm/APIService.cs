@@ -6,6 +6,8 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using LoginForm;
+using LoginForm.Constants;
+using LoginForm.Model;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using System;
@@ -887,7 +889,48 @@ namespace GoogleDriveAPIExample
 
             return null;
         }
-
+        /// <summary>
+        /// Tim kiem va sap xep tren Drive
+        /// </summary>
+        /// <param name="service">Service dung call Drive API</param>
+        /// <param name="searchParams">search va sort params</param>
+        /// <returns></returns>
+        public IList<Google.Apis.Drive.v3.Data.File> SearchFile(DriveService service, SearchFileParams searchParams)
+        {
+            var request = service.Files.List();
+            string queryBuilder;
+            //Kieu file can search
+            switch (searchParams.FileType)
+            {
+                case "File":
+                    queryBuilder = DriveSearchFileParams.IsNotFolder;
+                    break;
+                case "Folder":
+                    queryBuilder = DriveSearchFileParams.IsFolder;
+                    break;
+                default:
+                    queryBuilder = DriveSearchFileParams.Root;
+                    break;
+            }
+            //search theo filename
+            if (!string.IsNullOrEmpty(searchParams.FileName.Trim()))
+            {
+                queryBuilder = $"{queryBuilder} and {DriveSearchFileParams.NameContains} '{searchParams.FileName}'";
+            }
+            request.Q = queryBuilder;
+            request.Fields = "files(id, name, mimeType, iconLink)";
+            //sort
+            if(!string.IsNullOrEmpty(searchParams.SortBy))
+            {
+                if (!string.IsNullOrEmpty(searchParams.SortType))
+                    searchParams.SortBy += (" " + searchParams.SortType);
+                request.OrderBy = searchParams.SortBy.Trim();
+                
+            }
+            var results = request.Execute();
+            var files = results.Files;
+            return files;
+        }
         public IList<Google.Apis.Drive.v3.Data.File> LoadFilesFromRootFolder(DriveService service)
         {
             var request = service.Files.List();
