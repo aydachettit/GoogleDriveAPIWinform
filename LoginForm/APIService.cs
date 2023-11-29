@@ -6,8 +6,6 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using LoginForm;
-using LoginForm.Constants;
-using LoginForm.Model;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using System;
@@ -16,12 +14,15 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LoginForm.Constants;
+using LoginForm.Model;
 
 namespace GoogleDriveAPIExample
 {
@@ -107,7 +108,7 @@ namespace GoogleDriveAPIExample
             userName = aboutResponse.User.EmailAddress;
             userName = userName.Replace("@gmail.com", "");
             // Đường dẫn thư mục mới
-            string folderPath = Path.Combine("C:\\Users\\dante\\Downloads\\", userName);
+            string folderPath = Path.Combine("D:\\", userName);
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -146,8 +147,8 @@ namespace GoogleDriveAPIExample
         }
         public DriveService automatic(string userName)
         {
-            this.location = $"C:\\Users\\dante\\Downloads\\{userName}";
-            string tokenFilePath = $"C:\\Users\\dante\\Downloads\\{userName}\\Token.txt";
+            this.location = $"D:\\{userName}";
+            string tokenFilePath = $"D:\\{userName}\\Token.txt";
             string json = File.ReadAllText("client_secret.json");
 
             // Chuyển đổi chuỗi JSON thành đối tượng JObject
@@ -277,7 +278,7 @@ namespace GoogleDriveAPIExample
         ///
         public void DeleteFolderAndContents(DriveService service, string folderId)
         {
-            
+
 
             // Lấy danh sách tất cả các tệp tin và thư mục con trong thư mục cha
             var request = service.Files.List();
@@ -456,60 +457,38 @@ namespace GoogleDriveAPIExample
         public void uploadFile(DriveService service, string filePath, string parentFolderId)
         {
             string uploadedFileId = null;
-            if (!isNameExist(Path.GetFileName(filePath)))
+
+            if (parentFolderId == null)
             {
-                if (parentFolderId == null)
-                {
-                    string Directory = Path.GetDirectoryName(filePath);
-                    string folderName = Path.GetFileName(Directory);
-                    parentFolderId = getIdFromFile(folderName);
-                }
-
-                var fileMetadata = new Google.Apis.Drive.v3.Data.File()
-                {
-                    Name = Path.GetFileName(filePath),
-                    Parents = new List<string>() { parentFolderId }
-                };
-                Process[] processes = Process.GetProcesses();
-                foreach (Process process in processes)
-                {
-                    try
-                    {
-                        // Lấy thông tin về tệp tin mà quy trình đang sử dụng
-                        string processFilePath = process.MainModule.FileName;
-
-                        // Kiểm tra xem tệp tin có trùng khớp với filePath không
-                        if (string.Equals(processFilePath, filePath, StringComparison.OrdinalIgnoreCase))
-                        {
-                            // Dừng quy trình đang sử dụng tệp tin
-                            process.Kill();
-                            Console.WriteLine("Quy trình đã được dừng.");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        // Xử lý ngoại lệ nếu không thể lấy thông tin về quy trình
-                        Console.WriteLine($"Lỗi: {ex.Message}");
-                    }
-                }
-                FilesResource.CreateMediaUpload request;
-                using (var stream = new System.IO.FileStream(filePath, System.IO.FileMode.Open))
-                {
-                    request = service.Files.Create(fileMetadata, stream, "application/octet-stream");
-                    request.Fields = "id";
-                    request.Upload();
-                    var response = request.ResponseBody;
-
-                    // Lấy ID của tệp đã tải lên
-                    uploadedFileId = response?.Id;
-                    AddDataTofile(fileMetadata.Name, uploadedFileId);
-
-
-                    //AccessFileContent(service, GetFileById(service,uploadedFileId));
-                }
-                File.WriteAllText(filePath, (uploadedFileId + "," + Path.GetFileName(filePath) + "," + this.userName + "," + this.location));
-                Console.WriteLine("Done Uploading");
+                string Directory = Path.GetDirectoryName(filePath);
+                string folderName = Path.GetFileName(Directory);
+                parentFolderId = getIdFromFile(folderName);
             }
+
+            var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+            {
+                Name = Path.GetFileName(filePath),
+                Parents = new List<string>() { parentFolderId }
+            };
+
+            FilesResource.CreateMediaUpload request;
+            using (var stream = new System.IO.FileStream(filePath, System.IO.FileMode.Open))
+            {
+                request = service.Files.Create(fileMetadata, stream, "application/octet-stream");
+                request.Fields = "id";
+                request.Upload();
+                var response = request.ResponseBody;
+
+                // Lấy ID của tệp đã tải lên
+                uploadedFileId = response?.Id;
+                AddDataTofile(fileMetadata.Name, uploadedFileId);
+
+
+                //AccessFileContent(service, GetFileById(service,uploadedFileId));
+            }
+            File.WriteAllText(filePath, (uploadedFileId + "," + Path.GetFileName(filePath) + "," + this.userName + "," + this.location));
+            Console.WriteLine("Done Uploading");
+
         }
         public void readAllFileInfo(string folderPath)
         {
@@ -794,6 +773,99 @@ namespace GoogleDriveAPIExample
 
             request.Download(stream);
         }
+        public void DownloadFile(string fileId, DriveService driveService, string fileType, string saveLocate, string fileName)
+        {
+            var request = driveService.Files.Get(fileId);
+            var stream = new MemoryStream();
+
+            // Tạo đường dẫn cho thư mục "temp"
+            string savePath = saveLocate;
+
+            // Tải file từ Google Drive
+            request.MediaDownloader.ProgressChanged += (IDownloadProgress progress) =>
+            {
+                switch (progress.Status)
+                {
+                    case DownloadStatus.Downloading:
+                        {
+                            Console.WriteLine($"Đang tải... {progress.BytesDownloaded} bytes");
+                            break;
+                        }
+                    case DownloadStatus.Completed:
+                        {
+                            Console.WriteLine("Tải thành công!");
+
+
+
+                            // Lấy extension từ tên file trên Google Drive
+                            // Lấy extension từ URL
+                            string extension = fileType;
+                            // Tạo tên file tải về
+
+                            // Lưu file vào thư mục cần
+                            string filePath = Path.Combine(savePath, fileName);
+                            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                            {
+                                stream.Seek(0, SeekOrigin.Begin);
+                                stream.CopyTo(fileStream);
+                            }
+                            // Mở file sau khi tải xong
+                            OpenFile(savePath);
+
+                            break;
+                        }
+                    case DownloadStatus.Failed:
+                        {
+                            Console.WriteLine("Tải thất bại.");
+                            break;
+                        }
+                }
+            };
+
+            request.Download(stream);
+        }
+        public void CompressAndDownloadFiles(List<string> fileIds, DriveService driveService, string saveFileLocation, string zipName)
+        {
+            // Chuẩn bị tệp tin nén
+            string zipFilePath = Path.Combine(saveFileLocation, zipName);
+
+            // Tạo tệp tin nén
+            using (ZipArchive zipArchive = ZipFile.Open(zipFilePath, ZipArchiveMode.Create))
+            {
+
+
+                foreach (string fileId in fileIds)
+                {
+                    // Tải xuống tệp tin từ Google Drive
+                    MemoryStream fileStream = new MemoryStream();
+                    var request = driveService.Files.Get(fileId);
+                    request.Fields = "name, fileExtension";
+
+                    var file = request.Execute();
+                    string fileName = file.Name;
+                    string fileExtension = file.FileExtension;
+
+                    // Tải xuống tệp tin từ Google Drive
+                    request.Download(fileStream);
+                    fileStream.Seek(0, SeekOrigin.Begin);
+
+                    // Thêm tệp tin vào tệp tin nén với tên và phần mở rộng
+                    string entryFileName = $"{fileName}";
+                    ZipArchiveEntry zipEntry = zipArchive.CreateEntry(entryFileName);
+                    using (Stream entryStream = zipEntry.Open())
+                    {
+                        fileStream.CopyTo(entryStream);
+                    }
+
+                    // Đóng luồng tệp tin đã tải xuống
+                    fileStream.Close();
+                }
+            }
+
+            // Di chuyển tệp tin nén vào thư mục đích
+            File.Move(zipFilePath, Path.Combine(saveFileLocation, zipName));
+        }
+
         private void OpenFile(string filePath)
         {
             try
@@ -888,13 +960,12 @@ namespace GoogleDriveAPIExample
             }
 
             return null;
-        }
-        /// <summary>
-        /// Tim kiem va sap xep tren Drive
-        /// </summary>
-        /// <param name="service">Service dung call Drive API</param>
-        /// <param name="searchParams">search va sort params</param>
-        /// <returns></returns>
+        } /// <summary>
+          /// Tim kiem va sap xep tren Drive
+          /// </summary>
+          /// <param name="service">Service dung call Drive API</param>
+          /// <param name="searchParams">search va sort params</param>
+          /// <returns></returns>
         public IList<Google.Apis.Drive.v3.Data.File> SearchFile(DriveService service, SearchFileParams searchParams)
         {
             var request = service.Files.List();
@@ -920,18 +991,19 @@ namespace GoogleDriveAPIExample
             request.Q = queryBuilder;
             request.Fields = "files(id, name, mimeType, iconLink)";
             //sort
-            if(!string.IsNullOrEmpty(searchParams.SortBy))
+            if (!string.IsNullOrEmpty(searchParams.SortBy))
             {
                 if (!string.IsNullOrEmpty(searchParams.SortType))
                     searchParams.SortBy += (" " + searchParams.SortType);
                 request.OrderBy = searchParams.SortBy.Trim();
-                
+
             }
             var results = request.Execute();
             var files = results.Files;
             return files;
         }
-        public IList<Google.Apis.Drive.v3.Data.File> LoadFilesFromRootFolder(DriveService service)
+
+        public IList<Google.Apis.Drive.v3.Data.File> LoadFilesFromRootFolder(DriveService service, string folderId)
         {
             var request = service.Files.List();
             request.Q = "'root' in parents and trashed = false";
@@ -974,6 +1046,57 @@ namespace GoogleDriveAPIExample
             // Cập nhật trạng thái trashed thành false để khôi phục lại tệp tin hoặc thư mục
             updateRequest.Execute();
         }
+        public string UploadFileToGoogleDrive(string filePath, DriveService driveService, string folderId)
+        {
+            // Tạo tệp tin trên Google Drive
+            var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+            {
+                Name = Path.GetFileName(filePath),
+                Parents = new List<string>() { folderId }
+            };
 
+            FilesResource.CreateMediaUpload request;
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                request = driveService.Files.Create(fileMetadata, stream, "file/*");
+                request.Upload();
+            }
+
+            // Lấy ID của tệp tin đã tải lên
+            var file = request.ResponseBody;
+            return file.Id;
+        }
+        public IList<Google.Apis.Drive.v3.Data.File> LoadFileFromAParent(string folderId, DriveService service)
+        {
+            var request = service.Files.List();
+            request.Q = $"'{folderId}' in parents"; // Chỉ lấy các item trong folder có id là folderId
+            request.Fields = "files(id, name, mimeType, iconLink)";
+            var result = request.Execute();
+            return result.Files;
+        }
+        public string GetFolderName(string folderId, DriveService service)
+        {
+            try
+            {
+                var request = service.Files.Get(folderId);
+                var file = request.Execute();
+
+                // Kiểm tra xem item có phải là thư mục không
+                if (file.MimeType == "application/vnd.google-apps.folder")
+                {
+                    return file.Name;
+                }
+                else
+                {
+                    Console.WriteLine("Id không phải là của một thư mục.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi lấy thông tin về thư mục: {ex.Message}");
+            }
+
+            return null;
+        }
     }
 }
