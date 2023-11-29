@@ -63,7 +63,7 @@ namespace LoginForm
             string rootPath = apiService.location; // Thay thế bằng đường dẫn thư mục gốc của bạn
             //LoadDirectory(rootPath);
             IList<Google.Apis.Drive.v3.Data.File> files = apiService.LoadFilesFromRootFolder(service, "root");
-            loadFileFromDrive(files, "root");
+            loadFileFromDrive(files);
             pre_current_ids.Add("root");
             btnBack.Enabled = false;
             //wat.Start();
@@ -226,7 +226,7 @@ namespace LoginForm
         private void btnSearch_Click(object sender, EventArgs e)
         {
             IList<Google.Apis.Drive.v3.Data.File> files = apiService.SearchFile(service, new Model.SearchFileParams { FileName = this.txtSearchFileName.Text, FileType = this.cmbFileTyle.Text });
-            loadFileFromDrive(files,null);
+            loadFileFromDrive(files);
         }
 
         private void cmbFileTyle_SelectedIndexChanged(object sender, EventArgs e)
@@ -237,13 +237,13 @@ namespace LoginForm
         private void cmbOrderFiled_SelectedIndexChanged(object sender, EventArgs e)
         {
             IList<Google.Apis.Drive.v3.Data.File> files = apiService.SearchFile(service, new Model.SearchFileParams { FileName = this.txtSearchFileName.Text, FileType = this.cmbFileTyle.Text, SortBy = this.cmbOrderFiled.Text, SortType = cmbOrderType.Text });
-            loadFileFromDrive(files, null);
+            loadFileFromDrive(files);
         }
 
         private void cmbOrderType_SelectedIndexChanged(object sender, EventArgs e)
         {
             IList<Google.Apis.Drive.v3.Data.File> files = apiService.SearchFile(service, new Model.SearchFileParams { FileName = this.txtSearchFileName.Text, FileType = this.cmbFileTyle.Text, SortBy = this.cmbOrderFiled.Text, SortType = cmbOrderType.Text });
-            loadFileFromDrive(files, null);
+            loadFileFromDrive(files);
         }
         private void LogoutButton_Click(object sender, EventArgs e)
         {
@@ -253,7 +253,7 @@ namespace LoginForm
 
         }
         //Đủ sài
-        private void loadFileFromDrive(IList<Google.Apis.Drive.v3.Data.File> files, string folderId)
+        private void loadFileFromDrive(IList<Google.Apis.Drive.v3.Data.File> files)
         {
             listView1.Clear();
 
@@ -299,7 +299,7 @@ namespace LoginForm
                 if (Type == "application/vnd.google-apps.folder")
                 {
                     string selectedFolderId = selectedItem.SubItems[1].Text; // Lấy Id của item (folder)
-                    loadFileFromDrive(apiService.LoadFileFromAParent(selectedFolderId, service), selectedFolderId);
+                    loadFileFromDrive(apiService.LoadFileFromAParent(selectedFolderId, service));
                     pre_current_ids.Add(selectedFolderId);
                     btnBack.Enabled = true;
                 }
@@ -597,7 +597,7 @@ namespace LoginForm
         {
 
             pre_current_ids.RemoveAt(pre_current_ids.Count - 1);
-            loadFileFromDrive(apiService.LoadFileFromAParent(pre_current_ids.Last().ToString(), service), pre_current_ids.Last().ToString());
+            loadFileFromDrive(apiService.LoadFileFromAParent(pre_current_ids.Last().ToString(), service));
             if (pre_current_ids.Count == 1)
             {
                 btnBack.Enabled = false;
@@ -638,7 +638,7 @@ namespace LoginForm
             this.RecoverMenu.Click += new EventHandler(this.recoverToolStripMenuItem);
 
             IList<Google.Apis.Drive.v3.Data.File> files = apiService.GetFilesFromTrash(service);
-            //loadFileFromDrive(files);
+            loadFileFromDrive(files);
         }
         private void recoverToolStripMenuItem(object sender, EventArgs e)
         {
@@ -663,7 +663,9 @@ namespace LoginForm
         {
             this.listView1.ContextMenuStrip = this.contextMenuStrip1;
             IList<Google.Apis.Drive.v3.Data.File> files = apiService.LoadFilesFromRootFolder(service, null);
-            loadFileFromDrive(files, null);
+            pre_current_ids = new List<string>();
+            btnBack.Enabled = false;
+            loadFileFromDrive(files);
         }
 
         private void deletePermanentToolStripMenuItem_Click(object sender, EventArgs e)
