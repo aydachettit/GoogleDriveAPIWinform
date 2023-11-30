@@ -1007,9 +1007,11 @@ namespace GoogleDriveAPIExample
         {
             var request = service.Files.List();
             request.Q = "'root' in parents and trashed = false";
-            request.Fields = "files(id, name, mimeType, iconLink)";
+            request.Fields = "files(id, name, mimeType, iconLink, owners)";
             var results = request.Execute();
             var files = results.Files;
+            Google.Apis.Drive.v3.Data.File fit = new Google.Apis.Drive.v3.Data.File();
+
             return files;
         }
         public IList<Google.Apis.Drive.v3.Data.File> GetFilesFromTrash(DriveService driveService)
@@ -1098,5 +1100,7 @@ namespace GoogleDriveAPIExample
 
             return null;
         }
+        
+
     }
 }

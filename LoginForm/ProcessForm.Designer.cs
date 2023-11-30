@@ -34,6 +34,7 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moveToTrashCanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downloadToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnBack = new System.Windows.Forms.Button();
@@ -52,7 +53,6 @@
             this.cmbOrderFiled = new System.Windows.Forms.ComboBox();
             this.cmbOrderType = new System.Windows.Forms.ComboBox();
             this.labelStatus = new System.Windows.Forms.Label();
-            this.downloadToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -68,6 +68,7 @@
             this.listView1.Size = new System.Drawing.Size(557, 292);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
             this.listView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop2);
             this.listView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
             this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
@@ -82,7 +83,7 @@
             this.moveToTrashCanToolStripMenuItem,
             this.downloadToToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 92);
             // 
             // deleteToolStripMenuItem
             // 
@@ -103,6 +104,13 @@
             this.moveToTrashCanToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.moveToTrashCanToolStripMenuItem.Text = "Move to trash can";
             this.moveToTrashCanToolStripMenuItem.Click += new System.EventHandler(this.moveToTrashCanToolStripMenuItem_Click);
+            // 
+            // downloadToToolStripMenuItem
+            // 
+            this.downloadToToolStripMenuItem.Name = "downloadToToolStripMenuItem";
+            this.downloadToToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.downloadToToolStripMenuItem.Text = "Download to";
+            this.downloadToToolStripMenuItem.Click += new System.EventHandler(this.dowloadToToolStripMenuItem_Click);
             // 
             // imageList1
             // 
@@ -180,9 +188,9 @@
             this.groupBox1.Controls.Add(this.txtSearchFileName);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(9, 4);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(542, 71);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
@@ -191,7 +199,7 @@
             // btnSearch
             // 
             this.btnSearch.Location = new System.Drawing.Point(328, 14);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(58, 23);
             this.btnSearch.TabIndex = 4;
@@ -217,7 +225,7 @@
             "File",
             "Folder"});
             this.cmbFileTyle.Location = new System.Drawing.Point(212, 17);
-            this.cmbFileTyle.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cmbFileTyle.Margin = new System.Windows.Forms.Padding(2);
             this.cmbFileTyle.Name = "cmbFileTyle";
             this.cmbFileTyle.Size = new System.Drawing.Size(83, 21);
             this.cmbFileTyle.TabIndex = 2;
@@ -226,7 +234,7 @@
             // txtSearchFileName
             // 
             this.txtSearchFileName.Location = new System.Drawing.Point(58, 19);
-            this.txtSearchFileName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtSearchFileName.Margin = new System.Windows.Forms.Padding(2);
             this.txtSearchFileName.Name = "txtSearchFileName";
             this.txtSearchFileName.Size = new System.Drawing.Size(76, 20);
             this.txtSearchFileName.TabIndex = 1;
@@ -261,7 +269,7 @@
             "modifiedTime",
             "name"});
             this.cmbOrderFiled.Location = new System.Drawing.Point(400, 112);
-            this.cmbOrderFiled.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cmbOrderFiled.Margin = new System.Windows.Forms.Padding(2);
             this.cmbOrderFiled.Name = "cmbOrderFiled";
             this.cmbOrderFiled.Size = new System.Drawing.Size(92, 21);
             this.cmbOrderFiled.TabIndex = 8;
@@ -274,7 +282,7 @@
             "desc",
             "asc"});
             this.cmbOrderType.Location = new System.Drawing.Point(498, 112);
-            this.cmbOrderType.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cmbOrderType.Margin = new System.Windows.Forms.Padding(2);
             this.cmbOrderType.Name = "cmbOrderType";
             this.cmbOrderType.Size = new System.Drawing.Size(54, 21);
             this.cmbOrderType.TabIndex = 9;
@@ -288,13 +296,6 @@
             this.labelStatus.Size = new System.Drawing.Size(35, 13);
             this.labelStatus.TabIndex = 10;
             this.labelStatus.Text = "label4";
-            // 
-            // downloadToToolStripMenuItem
-            // 
-            this.downloadToToolStripMenuItem.Name = "downloadToToolStripMenuItem";
-            this.downloadToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.downloadToToolStripMenuItem.Text = "Download to";
-            this.downloadToToolStripMenuItem.Click += new System.EventHandler(this.dowloadToToolStripMenuItem_Click);
             // 
             // ProcessForm
             // 

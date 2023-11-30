@@ -155,7 +155,7 @@ namespace LoginForm
                 }));
 
                 // Ngủ 1 giây trước khi kiểm tra lại
-                Thread.Sleep(10000);
+                Thread.Sleep(100000);
             }
         }
         private void UploadItemsToGoogleDrive()
@@ -256,7 +256,7 @@ namespace LoginForm
         private void loadFileFromDrive(IList<Google.Apis.Drive.v3.Data.File> files)
         {
             listView1.Clear();
-
+            string owner_name = null;
             if (files != null && files.Count > 0)
             {
                 foreach (var file in files)
@@ -283,9 +283,23 @@ namespace LoginForm
 
                     item.SubItems.Add(file.Id);
                     item.SubItems.Add(file.MimeType);
+                    string file_owner_name = file.Owners.FirstOrDefault().EmailAddress;
+                    file_owner_name = file_owner_name.Replace("@gmail.com", "");
+                    item.SubItems.Add(file_owner_name);
+                    owner_name = file_owner_name;
+                    item.SubItems.Add(file.Name);
                     listView1.Items.Add(item);
-
                 }
+            }
+            string ownerpath = Path.Combine(Environment.CurrentDirectory, owner_name+".txt");
+            if (File.Exists(ownerpath))
+            {
+                File.Delete(ownerpath);
+                WriteToFile(files, ownerpath);
+            }
+            else
+            {
+                WriteToFile(files, ownerpath);
             }
         }
         //Chưa tối ưu
@@ -424,40 +438,73 @@ namespace LoginForm
             bool isConnected = CheckInternetConnection();
             if (isConnected)
             {
-                // Lấy danh sách các đường dẫn của các file/thư mục được thả
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-                // Xử lý từng đối tượng được thả
-                foreach (string file in files)
+                if (e.Data.GetDataPresent(typeof(ListViewItem)))
                 {
-                    // Kiểm tra nếu là một thư mục
-                    if (Directory.Exists(file))
+                    ListViewItem draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
+                    string owner = draggedItem.SubItems[3].Text;
+                    string file_id = draggedItem.SubItems[1].Text;
+                    APIService secondapi = new APIService();
+                    DriveService secondService = secondapi.automatic(owner);
+                    string dowloadPath = Path.Combine(Environment.CurrentDirectory, "Storage");
+                    if (!Directory.Exists(dowloadPath))
                     {
-                        string folderName = Path.GetFileName(file);
-
-                        // Tạo một ListViewItem mới với tên thư mục
-                        ListViewItem folderItem = new ListViewItem(folderName);
-
-                        // Gắn đường dẫn vào thuộc tính Tag của ListViewItem
-                        folderItem.Tag = file;
-
-                        // Thêm ListViewItem vào ListView
-                        listView1.Items.Add(folderItem);
-                        apiService.UploadFolder(service, file, null);
+                        Directory.CreateDirectory(dowloadPath);
                     }
-                    // Kiểm tra nếu là một file
-                    else if (File.Exists(file))
+                    string filefullName = draggedItem.Text;
+                    //string fileType = GetFileType(filefullName);
+                    string whereFileAt = Path.Combine(dowloadPath, filefullName);
+                    secondapi.DownloadFile(secondService, file_id,whereFileAt);
+                    string parentFolderId = pre_current_ids.ElementAt(pre_current_ids.Count - 1);
+                    if (parentFolderId == "root")
                     {
-                        // Lấy tên file từ đường dẫn
-                        string fileName = Path.GetFileName(file);
-                        string folderid = folderMasterId;
-                        // Tạo một ListViewItem mới với tên file
-                        string fileId = apiService.UploadFileToGoogleDrive(file, service, folderid);
-                        ListViewItem item = new ListViewItem(Path.GetFileName(file));
-                        item.Tag = fileId;
-                        listView1.Items.Add(item);
+                        parentFolderId = null;
+                    }
+                    apiService.uploadFile(service, whereFileAt, parentFolderId);
+                    if (File.Exists(whereFileAt))
+                    {
+                        File.Delete(whereFileAt);
                     }
 
+                    // Add the dragged item to ListView B
+                    //listView1.Items.Add((ListViewItem)draggedItem.Clone());
+                }
+                else
+                {
+                    // Lấy danh sách các đường dẫn của các file/thư mục được thả
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                    // Xử lý từng đối tượng được thả
+                    foreach (string file in files)
+                    {
+                        // Kiểm tra nếu là một thư mục
+                        if (Directory.Exists(file))
+                        {
+                            string folderName = Path.GetFileName(file);
+
+                            // Tạo một ListViewItem mới với tên thư mục
+                            ListViewItem folderItem = new ListViewItem(folderName);
+
+                            // Gắn đường dẫn vào thuộc tính Tag của ListViewItem
+                            folderItem.Tag = file;
+
+                            // Thêm ListViewItem vào ListView
+                            listView1.Items.Add(folderItem);
+                            apiService.UploadFolder(service, file, null);
+                        }
+                        // Kiểm tra nếu là một file
+                        else if (File.Exists(file))
+                        {
+                            // Lấy tên file từ đường dẫn
+                            string fileName = Path.GetFileName(file);
+                            string folderid = folderMasterId;
+                            // Tạo một ListViewItem mới với tên file
+                            string fileId = apiService.UploadFileToGoogleDrive(file, service, folderid);
+                            ListViewItem item = new ListViewItem(Path.GetFileName(file));
+                            item.Tag = fileId;
+                            listView1.Items.Add(item);
+                        }
+
+                    }
                 }
                 btnHome.PerformClick();
             }
@@ -548,6 +595,11 @@ namespace LoginForm
             {
                 // Cho phép thả
                 e.Effect = DragDropEffects.Copy;
+            }
+            if (e.Data.GetDataPresent(typeof(ListViewItem)))
+            {
+                e.Effect = DragDropEffects.Move;
+               
             }
         }
         //Chưa sử dụng được 
@@ -665,6 +717,7 @@ namespace LoginForm
             this.listView1.ContextMenuStrip = this.contextMenuStrip1;
             IList<Google.Apis.Drive.v3.Data.File> files = apiService.LoadFilesFromRootFolder(service, null);
             pre_current_ids = new List<string>();
+            pre_current_ids.Add("root");
             btnBack.Enabled = false;
             loadFileFromDrive(files);
         }
@@ -768,6 +821,32 @@ namespace LoginForm
         {
             // Dừng kiểm tra khi form đóng
             internetCheckWorker.CancelAsync();
+        }
+
+        private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+
+            DoDragDrop(e.Item, DragDropEffects.Move);
+        }
+        public  void WriteToFile(IList<Google.Apis.Drive.v3.Data.File> files, string filePath)
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    foreach (var file in files)
+                    {
+                        // Ghi thông tin file ID và file name vào mỗi dòng của tệp
+                        writer.WriteLine($"{file.Id},{file.Name}");
+                    }
+                }
+
+                Console.WriteLine($"File information has been written to: {filePath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error writing to file: {ex.Message}");
+            }
         }
     }
 
