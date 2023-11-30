@@ -142,7 +142,7 @@ namespace LoginForm
                         // Hiển thị thông báo có kết nối internet
                         labelStatus.Text = "Online";
                         labelStatus.ForeColor = Color.FromArgb(0, 255, 0);
-                        string folderPath = Path.Combine(Environment.CurrentDirectory, "save");
+                        string folderPath = Path.Combine(Environment.CurrentDirectory,Path.GetFileName(apiService.location)+ "_save");
                         UploadItemsToGoogleDrive();
                         btnHome.PerformClick();
                     }
@@ -160,7 +160,7 @@ namespace LoginForm
         }
         private void UploadItemsToGoogleDrive()
         {
-            string folderPath = Path.Combine(Environment.CurrentDirectory, "save");
+            string folderPath = Path.Combine(Environment.CurrentDirectory, Path.GetFileName(apiService.location)+"_save");
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -464,22 +464,23 @@ namespace LoginForm
             else
             {
                 string[] filesOrFolders = (string[])e.Data.GetData(DataFormats.FileDrop);
-
+                string wahtizd = Path.GetFileName(apiService.location);
+                string saveFolderName = wahtizd + "_save";
+                string saveFolderPath = Path.Combine(Environment.CurrentDirectory, saveFolderName);
+                if (!Directory.Exists(saveFolderPath))
+                {
+                    Directory.CreateDirectory(saveFolderPath);
+                }
                 foreach (string item in filesOrFolders)
                 {
                     if (Directory.Exists(item)) // It's a folder
                     {
-                        CopyFolder(item, Path.Combine(Environment.CurrentDirectory, "save"));
+                       // string saveFolderName = apiService.userName + "_save";
+                        CopyFolder(item,saveFolderPath);
                     }
                     else if (File.Exists(item)) // It's a file
                     {
-                        string saveFolderPath = Path.Combine(Environment.CurrentDirectory, "save");
                         string saveFilePath = Path.Combine(saveFolderPath, Path.GetFileName(item));
-
-                        if (!Directory.Exists(saveFolderPath))
-                        {
-                            Directory.CreateDirectory(saveFolderPath);
-                        }
 
                         File.Copy(item, saveFilePath);
                         UpdateListViewItem(Path.GetFileName(item), null);

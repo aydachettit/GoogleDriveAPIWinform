@@ -108,7 +108,7 @@ namespace GoogleDriveAPIExample
             userName = aboutResponse.User.EmailAddress;
             userName = userName.Replace("@gmail.com", "");
             // Đường dẫn thư mục mới
-            string folderPath = Path.Combine("D:\\", userName);
+            string folderPath = Path.Combine(Environment.CurrentDirectory, userName);
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -147,15 +147,15 @@ namespace GoogleDriveAPIExample
         }
         public DriveService automatic(string userName)
         {
-            this.location = $"D:\\{userName}";
-            string tokenFilePath = $"D:\\{userName}\\Token.txt";
+            this.location = $"{Environment.CurrentDirectory}\\{userName}";
+            string tokenFilePath = $"{Environment.CurrentDirectory}\\{userName}\\Token.txt";
             string json = File.ReadAllText("client_secret.json");
 
             // Chuyển đổi chuỗi JSON thành đối tượng JObject
             JObject jsonObject = JObject.Parse(json);
 
             // Truy cập vào client_id và client_secret
-            string clientId = jsonObject["installed"]["client_id"].ToString(); ;
+            string clientId = jsonObject["installed"]["client_id"].ToString();
             string clientSecret = jsonObject["installed"]["client_secret"].ToString();
             try
             {
