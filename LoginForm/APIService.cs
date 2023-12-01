@@ -1101,8 +1101,116 @@ namespace GoogleDriveAPIExample
             return null;
 
         }
+        public string GetDownloadLink(DriveService service, string fileId)
+        {
+            try
+            {
+                // Check if the file is already shared
+                bool isFileShared = IsFileShared(service, fileId);
 
-        
+                // Share the file only if it is not already shared
+                if (!isFileShared)
+                {
+                    ShareFile(service, fileId);
+                }
+
+                // Construct the export link
+                string exportLink = $"https://drive.google.com/uc?id={fileId}&export=download";
+
+                Console.WriteLine($"Download link for file '{fileId}': {exportLink}");
+
+                // Open the download link in the default web browser
+                OpenUrlInDefaultBrowser(exportLink);
+                Thread.Sleep(5000);
+                // Revoke the sharing permission after download if the file was not originally shared
+                if (!isFileShared)
+                {
+                    RevokeShareFile(service, fileId);
+                }
+
+                return exportLink;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting download link: {ex.Message}");
+                return null;
+            }
+        }
+        private static bool IsFileShared(DriveService service, string fileId)
+        {
+            try
+            {
+                // Retrieve the permission for the file
+                var permissions = service.Permissions.List(fileId).Execute().Permissions;
+
+                // Check if there is a permission for anyone with the role of reader
+                return permissions.Any(p => p.Type == "anyone" && p.Role == "reader");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking sharing status for file '{fileId}': {ex.Message}");
+                return false;
+            }
+        }
+
+        private static void ShareFile(DriveService service, string fileId)
+        {
+            try
+            {
+                // Create a permission for the file
+                var permission = new Google.Apis.Drive.v3.Data.Permission
+                {
+                    Type = "anyone",
+                    Role = "reader"
+                };
+
+                // Insert the permission
+                service.Permissions.Create(permission, fileId).Execute();
+                Console.WriteLine($"File '{fileId}' shared successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sharing file '{fileId}': {ex.Message}");
+            }
+        }
+
+        private static void RevokeShareFile(DriveService service, string fileId)
+        {
+            try
+            {
+                // Retrieve the permission ID for the shared permission
+                var permissionId = service.Permissions.List(fileId).Execute().Permissions
+                    .FirstOrDefault(p => p.Type == "anyone" && p.Role == "reader")?.Id;
+
+                // Revoke the permission if it exists
+                if (!string.IsNullOrEmpty(permissionId))
+                {
+                    service.Permissions.Delete(fileId, permissionId).Execute();
+                    Console.WriteLine($"Sharing permission revoked for file '{fileId}'.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error revoking sharing permission for file '{fileId}': {ex.Message}");
+            }
+        }
+        private static void OpenUrlInDefaultBrowser(string url)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error opening URL: {ex.Message}");
+            }
+        }
+
+
 
     }
 }

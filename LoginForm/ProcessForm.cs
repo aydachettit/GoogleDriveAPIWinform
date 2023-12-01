@@ -766,7 +766,7 @@ namespace LoginForm
                         {
                             // Lấy đường dẫn tệp tin đã chọn
                             folderPath = saveFileDialog.FileName;
-                            
+
                             // Tiến hành xử lý lưu tệp tin
                             // ...
                         }
@@ -785,6 +785,8 @@ namespace LoginForm
                 }
                 else
                 {
+                    //string folderId = selectedItem.SubItems[1].Text;
+                    //apiService.GetDownloadLink(service, folderId);
                     saveFileDialog.FileName = fileName;
                     // Thiết lập các tùy chọn khác cho hộp thoại
                     saveFileDialog.Filter = "All Files (*.*)|*.*";
@@ -802,7 +804,7 @@ namespace LoginForm
                     string fileType = GetFileType(fileName);
                     apiService.DownloadFile(id, service, fileType, directoryPath, fileName);
                 }
-                
+
             }
             if (listView1.SelectedItems.Count > 1)
             {
