@@ -1011,7 +1011,7 @@ namespace GoogleDriveAPIExample
             var results = request.Execute();
             var files = results.Files;
             Google.Apis.Drive.v3.Data.File fit = new Google.Apis.Drive.v3.Data.File();
-
+            
             return files;
         }
         public IList<Google.Apis.Drive.v3.Data.File> GetFilesFromTrash(DriveService driveService)
@@ -1072,7 +1072,7 @@ namespace GoogleDriveAPIExample
         {
             var request = service.Files.List();
             request.Q = $"'{folderId}' in parents"; // Chỉ lấy các item trong folder có id là folderId
-            request.Fields = "files(id, name, mimeType, iconLink)";
+            request.Fields = "files(id, name, mimeType, iconLink,owners)";
             var result = request.Execute();
             return result.Files;
         }
@@ -1099,7 +1099,9 @@ namespace GoogleDriveAPIExample
             }
 
             return null;
+
         }
+
         
 
     }

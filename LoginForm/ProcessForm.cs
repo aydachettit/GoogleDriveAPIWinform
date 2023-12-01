@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -310,6 +311,7 @@ namespace LoginForm
                 ListViewItem selectedItem = listView1.SelectedItems[0];
                 //application / vnd.google - apps.folder
                 string Type = selectedItem.SubItems[2].Text;
+                string owner = selectedItem.SubItems[3].Text;
                 if (Type == "application/vnd.google-apps.folder")
                 {
                     string selectedFolderId = selectedItem.SubItems[1].Text; // Lấy Id của item (folder)
@@ -748,27 +750,59 @@ namespace LoginForm
                 ListViewItem selectedItem = listView1.SelectedItems[0];
                 string fileName = selectedItem.Text;
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.FileName = fileName;
-                // Thiết lập các tùy chọn khác cho hộp thoại
-                saveFileDialog.Filter = "All Files (*.*)|*.*";
-                saveFileDialog.Title = "Save File";
+               
                 string filePath = null;
+                string folderPath = null;
                 // Hiển thị hộp thoại và kiểm tra kết quả
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                string Type = selectedItem.SubItems[2].Text;
+                if (Type == "application/vnd.google-apps.folder")
                 {
-                    // Lấy đường dẫn tệp tin đã chọn
-                    filePath = saveFileDialog.FileName;
-
-                    // Tiến hành xử lý lưu tệp tin
-                    // ...
+                    saveFileDialog.Title = "Select Destination Folder";
+                    saveFileDialog.FileName = selectedItem.SubItems[4].Text;
+                    saveFileDialog.Filter = "Folders|*.folder";
+                    saveFileDialog.RestoreDirectory = true;
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        {
+                            // Lấy đường dẫn tệp tin đã chọn
+                            folderPath = saveFileDialog.FileName;
+                            
+                            // Tiến hành xử lý lưu tệp tin
+                            // ...
+                        }
+                        string folderId = selectedItem.SubItems[1].Text;
+                        string directoryPath = Path.GetDirectoryName(folderPath);
+                        apiService.DownloadFolder(service, folderId, Path.Combine(directoryPath, selectedItem.SubItems[4].Text));
+                        try
+                        {
+                            Process.Start(directoryPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Không thể mở file: " + ex.Message);
+                        }
+                    }
                 }
-                if (filePath != null)
+                else
                 {
+                    saveFileDialog.FileName = fileName;
+                    // Thiết lập các tùy chọn khác cho hộp thoại
+                    saveFileDialog.Filter = "All Files (*.*)|*.*";
+                    saveFileDialog.Title = "Save File";
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        // Lấy đường dẫn tệp tin đã chọn
+                        filePath = saveFileDialog.FileName;
+
+                        // Tiến hành xử lý lưu tệp tin
+                        // ...
+                    }
                     string directoryPath = Path.GetDirectoryName(filePath);
                     string id = apiService.GetFileOrFolderId(service, fileName);
                     string fileType = GetFileType(fileName);
                     apiService.DownloadFile(id, service, fileType, directoryPath, fileName);
                 }
+                
             }
             if (listView1.SelectedItems.Count > 1)
             {
