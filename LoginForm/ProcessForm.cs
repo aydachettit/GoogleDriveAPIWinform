@@ -440,35 +440,48 @@ namespace LoginForm
             bool isConnected = CheckInternetConnection();
             if (isConnected)
             {
-                if (e.Data.GetDataPresent(typeof(ListViewItem)))
+                if (e.Data.GetDataPresent(typeof(List<ListViewItem>)))
                 {
-                    ListViewItem draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
-                    string owner = draggedItem.SubItems[3].Text;
-                    string file_id = draggedItem.SubItems[1].Text;
-                    APIService secondapi = new APIService();
-                    DriveService secondService = secondapi.automatic(owner);
+                    List<ListViewItem> draggedItems = (List<ListViewItem>)e.Data.GetData(typeof(List<ListViewItem>));
+                    string whereFileAt = null;
                     string dowloadPath = Path.Combine(Environment.CurrentDirectory, "Storage");
-                    if (!Directory.Exists(dowloadPath))
+                    // Tương tác với tất cả các ListViewItem được chọn
+                    foreach (ListViewItem draggedItem in draggedItems)
                     {
-                        Directory.CreateDirectory(dowloadPath);
+                        string owner = draggedItem.SubItems[3].Text;
+                        string file_id = draggedItem.SubItems[1].Text;
+                        string type = draggedItem.SubItems[2].Text;
+                        APIService secondapi = new APIService();
+                        DriveService secondService = secondapi.automatic(owner);
+                       
+                        if (!Directory.Exists(dowloadPath))
+                        {
+                            Directory.CreateDirectory(dowloadPath);
+                        }
+                        string filefullName = draggedItem.Text;
+                        //string fileType = GetFileType(filefullName);
+                        whereFileAt = Path.Combine(dowloadPath, filefullName);
+                        secondapi.DownloadFileOrFolder(secondService, file_id, dowloadPath);
+                       
+
+                        // Add the dragged item to ListView B
+                        //listView1.Items.Add((ListViewItem)draggedItem.Clone());
                     }
-                    string filefullName = draggedItem.Text;
-                    //string fileType = GetFileType(filefullName);
-                    string whereFileAt = Path.Combine(dowloadPath, filefullName);
-                    secondapi.DownloadFile(secondService, file_id,whereFileAt);
                     string parentFolderId = pre_current_ids.ElementAt(pre_current_ids.Count - 1);
                     if (parentFolderId == "root")
                     {
                         parentFolderId = null;
                     }
-                    apiService.uploadFile(service, whereFileAt, parentFolderId);
-                    if (File.Exists(whereFileAt))
+                    apiService.UploadFolder_ver2(service, dowloadPath, parentFolderId);
+                    int size = dowloadPath.Length;
+                    if (Directory.Exists(dowloadPath))
                     {
-                        File.Delete(whereFileAt);
+                        if (size == 89)
+                        {
+                            Directory.Delete(dowloadPath,true);
+                        }
                     }
 
-                    // Add the dragged item to ListView B
-                    //listView1.Items.Add((ListViewItem)draggedItem.Clone());
                 }
                 else
                 {
@@ -491,16 +504,25 @@ namespace LoginForm
 
                             // Thêm ListViewItem vào ListView
                             listView1.Items.Add(folderItem);
-                            apiService.UploadFolder(service, file, null);
+                            string parentFolderId = pre_current_ids.ElementAt(pre_current_ids.Count - 1);
+                            if (parentFolderId == "root")
+                            {
+                                parentFolderId = null;
+                            }
+                            apiService.UploadFolder(service, file, parentFolderId);
                         }
                         // Kiểm tra nếu là một file
                         else if (File.Exists(file))
                         {
                             // Lấy tên file từ đường dẫn
                             string fileName = Path.GetFileName(file);
-                            string folderid = folderMasterId;
+                            string parentFolderId = pre_current_ids.ElementAt(pre_current_ids.Count - 1);
+                            if (parentFolderId == "root")
+                            {
+                                parentFolderId = null;
+                            }
                             // Tạo một ListViewItem mới với tên file
-                            string fileId = apiService.UploadFileToGoogleDrive(file, service, folderid);
+                            string fileId = apiService.UploadFileToGoogleDrive(file, service, parentFolderId);
                             ListViewItem item = new ListViewItem(Path.GetFileName(file));
                             item.Tag = fileId;
                             listView1.Items.Add(item);
@@ -810,40 +832,46 @@ namespace LoginForm
             {
                 List<string> selectedFileIds = new List<string>();
 
-                // Duyệt qua các mục đã chọn trong ListView
-                foreach (ListViewItem selectedItem in listView1.SelectedItems)
-                {
-                    // Lấy giá trị ID từ SubItems
-                    string id = selectedItem.SubItems[1].Text;
 
-                    // Thêm ID vào danh sách
-                    selectedFileIds.Add(id);
+                //SaveFileDialog saveFileDialog = new SaveFileDialog();
+                //string today = Convert.ToString(DateTime.Now);
+                //string fileName = "Drive-dowload-" + today + ".zip";
+                //fileName = fileName.Replace(":", "");
+                //fileName = fileName.Replace("/", "");
+                //fileName = fileName.Replace(" ", "");
+                //saveFileDialog.FileName = fileName;
+                //// Thiết lập các tùy chọn khác cho hộp thoại
+                //saveFileDialog.Filter = "All Files (*.*)|*.*";
+                //saveFileDialog.Title = "Save File";
+                //string filePath = null;
+                //// Hiển thị hộp thoại và kiểm tra kết quả
+                //if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                //{
+                //    // Lấy đường dẫn tệp tin đã chọn
+                //    filePath = saveFileDialog.FileName;
 
-                }
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                string today = Convert.ToString(DateTime.Now);
-                string fileName = "Drive-dowload-" + today + ".zip";
-                fileName = fileName.Replace(":", "");
-                fileName = fileName.Replace("/", "");
-                fileName = fileName.Replace(" ", "");
-                saveFileDialog.FileName = fileName;
-                // Thiết lập các tùy chọn khác cho hộp thoại
-                saveFileDialog.Filter = "All Files (*.*)|*.*";
-                saveFileDialog.Title = "Save File";
+                //    // Tiến hành xử lý lưu tệp tin
+                //    // ...
+                //}
+                var folderBrowserDialog1 = new FolderBrowserDialog();
+
+                // Show the FolderBrowserDialog.
+                DialogResult result = folderBrowserDialog1.ShowDialog();
                 string filePath = null;
-                // Hiển thị hộp thoại và kiểm tra kết quả
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                if (result == DialogResult.OK)
                 {
-                    // Lấy đường dẫn tệp tin đã chọn
-                    filePath = saveFileDialog.FileName;
-
-                    // Tiến hành xử lý lưu tệp tin
-                    // ...
-                }
+                    filePath = folderBrowserDialog1.SelectedPath;
+                   //Do your work here!
+    }
                 if (filePath != null)
                 {
-                    string directoryPath = Path.GetDirectoryName(filePath);
-                    apiService.CompressAndDownloadFiles(selectedFileIds, service, directoryPath, fileName);
+                    foreach (ListViewItem selectedItem in listView1.SelectedItems)
+                    {
+                        // Lấy giá trị ID từ SubItems
+                        string id = selectedItem.SubItems[1].Text;
+                        apiService.DownloadFileOrFolder(service, id, filePath);
+
+                    }
                 }
             }
         }
@@ -862,7 +890,23 @@ namespace LoginForm
         private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
         {
 
-            DoDragDrop(e.Item, DragDropEffects.Move);
+            if (listView1.SelectedItems.Count > 0)
+            {
+                // Tạo một danh sách chứa các mục được chọn
+                List<ListViewItem> selectedItems = new List<ListViewItem>();
+                foreach (ListViewItem item in listView1.SelectedItems)
+                {
+                    selectedItems.Add(item);
+                }
+
+                // Chuyển danh sách các mục được chọn vào đối tượng DataObject
+                DataObject dragData = new DataObject();
+                dragData.SetData(typeof(List<ListViewItem>), selectedItems);
+
+                // Bắt đầu thực hiện kéo
+                listView1.DoDragDrop(dragData, DragDropEffects.Move);
+            }
+            //listView1.DoDragDrop(e.Item, DragDropEffects.Move);
         }
         public  void WriteToFile(IList<Google.Apis.Drive.v3.Data.File> files, string filePath)
         {
@@ -882,6 +926,14 @@ namespace LoginForm
             catch (Exception ex)
             {
                 Console.WriteLine($"Error writing to file: {ex.Message}");
+            }
+        }
+
+        private void listView1_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(List<ListViewItem>)))
+            {
+                e.Effect = DragDropEffects.Move;
             }
         }
     }

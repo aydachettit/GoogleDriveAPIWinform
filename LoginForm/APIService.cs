@@ -1210,7 +1210,118 @@ namespace GoogleDriveAPIExample
             }
         }
 
+        public void DownloadFileOrFolder(DriveService service ,string fileId, string destinationPath)
+        {
+            try
+            {
+                Google.Apis.Drive.v3.Data.File fileMetadata = service.Files.Get(fileId).Execute();
 
+                if (fileMetadata.MimeType == "application/vnd.google-apps.folder")
+                {
+                    // Nếu là một thư mục, tải về thư mục và tất cả các tệp con của nó
+                    DownloadFolder(service,fileMetadata, destinationPath);
+                }
+                else
+                {
+                    // Nếu là một tệp, chỉ tải về tệp đó
+                    DownloadFile(service,fileMetadata, destinationPath);
+                }
+
+                Console.WriteLine($"Download completed: {fileMetadata.Name}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error downloading file or folder: {ex.Message}");
+            }
+        }
+
+        private void DownloadFile(DriveService service,Google.Apis.Drive.v3.Data.File file, string destinationPath)
+        {
+            using (var stream = new MemoryStream())
+            {
+                var request = service.Files.Get(file.Id);
+                request.Download(stream);
+
+                using (var fileStream = new FileStream(Path.Combine(destinationPath, file.Name), FileMode.Create, FileAccess.Write))
+                {
+                    stream.WriteTo(fileStream);
+                }
+            }
+        }
+
+        private void DownloadFolder(DriveService service,Google.Apis.Drive.v3.Data.File folder, string destinationPath)
+        {
+            string folderName = folder.Name;
+            string folderPath = Path.Combine(destinationPath, folderName);
+
+            // Tạo thư mục để lưu trữ tất cả các tệp và thư mục con
+            Directory.CreateDirectory(folderPath);
+
+            // Lấy danh sách tất cả các tệp và thư mục con của thư mục
+            var childrenRequest = service.Files.List();
+            childrenRequest.Q = $"'{folder.Id}' in parents";
+            var children = childrenRequest.Execute().Files;
+
+            // Đệ quy để tải về tất cả các tệp và thư mục con
+            foreach (var child in children)
+            {
+                DownloadFileOrFolder(service,child.Id, folderPath);
+            }
+        }
+        private string CreateFolder(DriveService service,string folderName, string parentFolderId)
+        {
+            var folderMetadata = new Google.Apis.Drive.v3.Data.File
+            {
+                Name = folderName,
+                MimeType = "application/vnd.google-apps.folder",
+                Parents = new[] { parentFolderId }
+            };
+
+            var request = service.Files.Create(folderMetadata);
+            request.Fields = "id";
+
+            var folder = request.Execute();
+            Console.WriteLine($"Created folder: {folderName}, Id: {folder.Id}");
+
+            return folder.Id;
+        }
+        private void UploadFile(DriveService service,string filePath, string parentFolderId)
+        {
+            var fileMetadata = new Google.Apis.Drive.v3.Data.File
+            {
+                Name = Path.GetFileName(filePath),
+                Parents = new[] { parentFolderId }
+            };
+
+            FilesResource.CreateMediaUpload request;
+
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                request = service.Files.Create(fileMetadata, stream, GetMimeType(filePath));
+                request.Upload();
+            }
+
+            var uploadedFile = request.ResponseBody;
+            Console.WriteLine($"Uploaded file: {uploadedFile.Name}, Id: {uploadedFile.Id}");
+        }
+        public void UploadFolder_ver2(DriveService service,string folderPath, string parentFolderId)
+        {
+            string[] allFiles = Directory.GetFiles(folderPath);
+            string[] allDirectories = Directory.GetDirectories(folderPath);
+
+            foreach (string filePath in allFiles)
+            {
+                UploadFile(service,filePath, parentFolderId);
+            }
+
+            foreach (string directoryPath in allDirectories)
+            {
+                string folderName = Path.GetFileName(directoryPath);
+                string newParentFolderId = CreateFolder(service,folderName, parentFolderId);
+
+                UploadFolder_ver2(service,directoryPath, newParentFolderId);
+            }
+        }
 
     }
 }
