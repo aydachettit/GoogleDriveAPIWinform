@@ -30,6 +30,7 @@
         {
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.labelStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // linkLabel1
@@ -50,11 +51,21 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(226, 171);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
+            // labelStatus
+            // 
+            this.labelStatus.AutoSize = true;
+            this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelStatus.Location = new System.Drawing.Point(34, 13);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(0, 20);
+            this.labelStatus.TabIndex = 2;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(238, 268);
+            this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.linkLabel1);
             this.Name = "Form1";
@@ -69,6 +80,7 @@
 
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Label labelStatus;
     }
 }
 

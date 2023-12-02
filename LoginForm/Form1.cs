@@ -6,15 +6,20 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.Design;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace LoginForm
 {
     public partial class Form1 : Form
     {
+
+        private BackgroundWorker internetCheckWorker;
         public Form1()
         {
             InitializeComponent();
@@ -48,6 +53,58 @@ namespace LoginForm
                         flowLayoutPanel1.Controls.Add(closeButton);
                     }
                 }
+            }
+            internetCheckWorker = new BackgroundWorker();
+            internetCheckWorker.WorkerSupportsCancellation = true;
+            internetCheckWorker.DoWork += InternetCheckWorker_DoWork;
+
+            // Bắt đầu kiểm tra liên tục
+            internetCheckWorker.RunWorkerAsync();
+            //timer.Start();
+        }
+        private void InternetCheckWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while (!internetCheckWorker.CancellationPending)
+            {
+                // Kiểm tra kết nối internet
+                bool isConnected = CheckInternetConnection();
+
+                // Cập nhật giao diện dựa trên kết quả kiểm tra
+                Invoke(new Action(() =>
+                {
+                    if (isConnected)
+                    {
+                        labelStatus.Text = "";
+                        flowLayoutPanel1.Enabled = true;
+                        linkLabel1.Enabled = true;
+                    }
+                    else
+                    {
+                        // Hiển thị thông báo không có kết nối internet
+                        labelStatus.Text = "No Internet Connection";
+                        labelStatus.ForeColor = Color.FromArgb(255, 0, 0);
+                        flowLayoutPanel1.Enabled = false;
+                        linkLabel1.Enabled = false;
+                    }
+                }));
+
+                // Ngủ 1 giây trước khi kiểm tra lại
+                Thread.Sleep(1000);
+            }
+        }
+        private bool CheckInternetConnection()
+        {
+            try
+            {
+                using (var client = new WebClient())
+                using (var stream = client.OpenRead("http://www.google.com"))
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
         private void click_label(object sender, EventArgs e)
