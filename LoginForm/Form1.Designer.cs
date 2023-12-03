@@ -28,21 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.labelStatus = new System.Windows.Forms.Label();
+            this.BtnGoogle = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // linkLabel1
-            // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(40, 53);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(142, 13);
-            this.linkLabel1.TabIndex = 0;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Login using another account";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // flowLayoutPanel1
             // 
@@ -60,14 +49,31 @@
             this.labelStatus.Size = new System.Drawing.Size(0, 20);
             this.labelStatus.TabIndex = 2;
             // 
+            // BtnGoogle
+            // 
+            this.BtnGoogle.FlatAppearance.BorderColor = System.Drawing.SystemColors.Info;
+            this.BtnGoogle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnGoogle.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.BtnGoogle.Image = global::LoginForm.Properties.Resources.icons8_google_48;
+            this.BtnGoogle.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.BtnGoogle.Location = new System.Drawing.Point(12, 303);
+            this.BtnGoogle.Name = "BtnGoogle";
+            this.BtnGoogle.Size = new System.Drawing.Size(219, 54);
+            this.BtnGoogle.TabIndex = 3;
+            this.BtnGoogle.Text = "Sign up with google";
+            this.BtnGoogle.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.BtnGoogle.UseVisualStyleBackColor = true;
+            this.BtnGoogle.Click += new System.EventHandler(this.BtnGoogle_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(238, 268);
+            this.BackColor = System.Drawing.SystemColors.Info;
+            this.ClientSize = new System.Drawing.Size(243, 434);
+            this.Controls.Add(this.BtnGoogle);
             this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.flowLayoutPanel1);
-            this.Controls.Add(this.linkLabel1);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -77,10 +83,9 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label labelStatus;
+        private System.Windows.Forms.Button BtnGoogle;
     }
 }
 

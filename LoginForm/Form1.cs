@@ -76,7 +76,7 @@ namespace LoginForm
                     {
                         labelStatus.Text = "";
                         flowLayoutPanel1.Enabled = true;
-                        linkLabel1.Enabled = true;
+                        BtnGoogle.Enabled = true;
                     }
                     else
                     {
@@ -84,7 +84,7 @@ namespace LoginForm
                         labelStatus.Text = "No Internet Connection";
                         labelStatus.ForeColor = Color.FromArgb(255, 0, 0);
                         flowLayoutPanel1.Enabled = false;
-                        linkLabel1.Enabled = false;
+                        BtnGoogle.Enabled = false ;
                     }
                 }));
 
@@ -136,6 +136,7 @@ namespace LoginForm
 
             ProcessForm newForm = new ProcessForm(apiService.userName);
             newForm.Show();
+            Application.Restart();
 
         }
         public void DeleteUserInHistory(string valueToDelete)
@@ -174,10 +175,10 @@ namespace LoginForm
             {
                 if(value!=""){
                     // Kiểm tra xem thư mục có tồn tại không
-                    if (Directory.Exists($"\\{value}"))
+                    if (Directory.Exists($"{Environment.CurrentDirectory}\\{value}"))
                     {
                         // Xóa thư mục
-                        Directory.Delete($"\\{value}", true);
+                        Directory.Delete($"{Environment.CurrentDirectory}\\{value}", true);
                         Console.WriteLine("Đã xóa thư mục thành công.");
                     }
                     else
@@ -190,6 +191,16 @@ namespace LoginForm
             {
                 Console.WriteLine("Đã xảy ra lỗi: " + ex.Message);
             }
+        }
+
+        private void BtnGoogle_Click(object sender, EventArgs e)
+        {
+            APIService apiService = new APIService();
+            Watcher wat = new Watcher(apiService, apiService.startService());
+
+            ProcessForm newForm = new ProcessForm(apiService.userName);
+            newForm.Show();
+            
         }
     }
 }
