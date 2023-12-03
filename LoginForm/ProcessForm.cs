@@ -675,7 +675,14 @@ namespace LoginForm
         {
 
             pre_current_ids.RemoveAt(pre_current_ids.Count - 1);
-            loadFileFromDrive(apiService.LoadFileFromAParent(pre_current_ids.Last().ToString(), service));
+            if (pre_current_ids.Last() == "shared")
+            {
+                loadFileFromDrive(apiService.geShareFiles(service));
+            }
+            else
+            {
+                loadFileFromDrive(apiService.LoadFileFromAParent(pre_current_ids.Last().ToString(), service));
+            }
             if (pre_current_ids.Count == 1)
             {
                 btnBack.Enabled = false;
@@ -935,6 +942,20 @@ namespace LoginForm
             if (e.Data.GetDataPresent(typeof(List<ListViewItem>)))
             {
                 e.Effect = DragDropEffects.Move;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            loadFileFromDrive(apiService.geShareFiles(service));
+            pre_current_ids.Add("shared");
+        }
+
+        private void ProcessForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, "temp")))
+            {
+                Directory.Delete(Path.Combine(Environment.CurrentDirectory, "temp"), true);
             }
         }
     }

@@ -41,6 +41,8 @@
             this.RecoverMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.deletePermanentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.labelStatus = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbFileTyle = new System.Windows.Forms.ComboBox();
             this.txtSearchFileName = new System.Windows.Forms.TextBox();
@@ -48,8 +50,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.cmbOrderFiled = new System.Windows.Forms.ComboBox();
             this.cmbOrderType = new System.Windows.Forms.ComboBox();
-            this.labelStatus = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnSearch = new System.Windows.Forms.Button();
             this.btnHome = new System.Windows.Forms.Button();
             this.btnOpenTrashFiles = new System.Windows.Forms.Button();
@@ -170,6 +171,26 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Search";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(418, 17);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(54, 16);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Status:";
+            // 
+            // labelStatus
+            // 
+            this.labelStatus.AutoSize = true;
+            this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelStatus.Location = new System.Drawing.Point(475, 17);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(50, 16);
+            this.labelStatus.TabIndex = 10;
+            this.labelStatus.Text = "label4";
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -254,25 +275,15 @@
             this.cmbOrderType.TabIndex = 9;
             this.cmbOrderType.SelectedIndexChanged += new System.EventHandler(this.cmbOrderType_SelectedIndexChanged);
             // 
-            // labelStatus
+            // button1
             // 
-            this.labelStatus.AutoSize = true;
-            this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStatus.Location = new System.Drawing.Point(475, 17);
-            this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(50, 16);
-            this.labelStatus.TabIndex = 10;
-            this.labelStatus.Text = "label4";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(418, 17);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(54, 16);
-            this.label4.TabIndex = 11;
-            this.label4.Text = "Status:";
+            this.button1.Image = global::LoginForm.Properties.Resources.icons8_share_24;
+            this.button1.Location = new System.Drawing.Point(165, 99);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(46, 34);
+            this.button1.TabIndex = 10;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // btnSearch
             // 
@@ -323,6 +334,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Info;
             this.ClientSize = new System.Drawing.Size(558, 431);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.cmbOrderType);
             this.Controls.Add(this.cmbOrderFiled);
             this.Controls.Add(this.label3);
@@ -334,6 +346,7 @@
             this.Controls.Add(this.listView1);
             this.Name = "ProcessForm";
             this.Text = "ProcessForm";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ProcessForm_FormClosed);
             this.Load += new System.EventHandler(this.ProcessForm_Load);
             this.contextMenuStrip1.ResumeLayout(false);
             this.contextMenuStrip2.ResumeLayout(false);
@@ -371,5 +384,6 @@
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.ToolStripMenuItem downloadToToolStripMenuItem;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button button1;
     }
 }

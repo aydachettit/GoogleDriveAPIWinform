@@ -23,7 +23,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LoginForm.Constants;
 using LoginForm.Model;
-
+using Google.Apis.Drive.v3.Data;
 namespace GoogleDriveAPIExample
 {
     public class APIService
@@ -60,21 +60,21 @@ namespace GoogleDriveAPIExample
         public void saveToken(string sourcePath, string destinationPath)
         {
 
-            string fileContent = File.ReadAllText(sourcePath + "\\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user");
+            string fileContent = System.IO.File.ReadAllText(sourcePath + "\\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user");
             JObject jsonObject = JObject.Parse(fileContent);
 
             string accessToken = jsonObject["access_token"].ToString();
             string refreshToken = jsonObject["refresh_token"].ToString();
             string saveContent = accessToken + "," + refreshToken;
-            File.WriteAllText(destinationPath, saveContent);
+            System.IO.File.WriteAllText(destinationPath, saveContent);
             Console.WriteLine("Done writing");
             try
             {
                 // Kiểm tra xem tệp tin có tồn tại không
-                if (File.Exists((sourcePath + "\\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user")))
+                if (System.IO.File.Exists((sourcePath + "\\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user")))
                 {
                     // Xóa tệp tin
-                    File.Delete((sourcePath + "\\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user"));
+                    System.IO.File.Delete((sourcePath + "\\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user"));
                     Console.WriteLine("Đã xóa tệp tin thành công.");
                 }
                 else
@@ -118,10 +118,10 @@ namespace GoogleDriveAPIExample
 
 
 
-            if (File.Exists(Path.Combine(Environment.CurrentDirectory, fileName)))
+            if (System.IO.File.Exists(Path.Combine(Environment.CurrentDirectory, fileName)))
             {
                 // Đọc nội dung của tệp tin
-                string[] lines = File.ReadAllLines(Path.Combine(Environment.CurrentDirectory, fileName));
+                string[] lines = System.IO.File.ReadAllLines(Path.Combine(Environment.CurrentDirectory, fileName));
 
                 // Kiểm tra xem tên người dùng đã tồn tại trong tệp tin chưa
                 if (Array.IndexOf(lines, userName) != -1)
@@ -131,14 +131,14 @@ namespace GoogleDriveAPIExample
                 else
                 {
                     // Ghi thêm tên người dùng vào tệp tin
-                    File.AppendAllText(Path.Combine(Environment.CurrentDirectory, fileName), userName + Environment.NewLine);
+                    System.IO.File.AppendAllText(Path.Combine(Environment.CurrentDirectory, fileName), userName + Environment.NewLine);
                     Console.WriteLine("Đã ghi tên người dùng vào tệp tin.");
                 }
             }
             else
             {
                 // Tạo tệp tin và ghi tên người dùng vào đó
-                File.WriteAllText(Path.Combine(Environment.CurrentDirectory, fileName), userName + Environment.NewLine);
+                System.IO.File.WriteAllText(Path.Combine(Environment.CurrentDirectory, fileName), userName + Environment.NewLine);
                 Console.WriteLine("Đã tạo và ghi tên người dùng vào tệp tin.");
             }
 
@@ -149,7 +149,7 @@ namespace GoogleDriveAPIExample
         {
             this.location = $"{Environment.CurrentDirectory}\\{userName}";
             string tokenFilePath = $"{Environment.CurrentDirectory}\\{userName}\\Token.txt";
-            string json = File.ReadAllText("client_secret.json");
+            string json = System.IO.File.ReadAllText("client_secret.json");
 
             // Chuyển đổi chuỗi JSON thành đối tượng JObject
             JObject jsonObject = JObject.Parse(json);
@@ -160,7 +160,7 @@ namespace GoogleDriveAPIExample
             try
             {
                 // Đọc dữ liệu từ tệp tin
-                string tokenData = File.ReadAllText(tokenFilePath);
+                string tokenData = System.IO.File.ReadAllText(tokenFilePath);
 
                 // Tách chuỗi thành accessToken và refreshToken
                 string[] tokens = tokenData.Split(',');
@@ -383,7 +383,7 @@ namespace GoogleDriveAPIExample
                     // Nếu là tệp tin, tải xuống tệp tin
                     string filePath = Path.Combine(downloadFolderPath, file.Name);
                     //DownloadFile(service, file.Id, filePath);
-                    File.WriteAllText(filePath, (contain.id + "," + contain.name + "," + contain.owner + "," + contain.root));
+                    System.IO.File.WriteAllText(filePath, (contain.id + "," + contain.name + "," + contain.owner + "," + contain.root));
                 }
             }
             string datapath = downloadFolderPath + "\\data.txt";
@@ -440,7 +440,7 @@ namespace GoogleDriveAPIExample
                 {
                     // Nếu là tệp tin, tải xuống tệp tin
                     string filePath = Path.Combine(folderPath, file.Name);
-                    File.WriteAllText(filePath, file.Id);
+                    System.IO.File.WriteAllText(filePath, file.Id);
                     //DownloadFile(service, file.Id, filePath);
                     Console.WriteLine("Tệp " + file.Name + " ID: " + file.Id + " Đã được tải");
                 }
@@ -486,7 +486,7 @@ namespace GoogleDriveAPIExample
 
                 //AccessFileContent(service, GetFileById(service,uploadedFileId));
             }
-            File.WriteAllText(filePath, (uploadedFileId + "," + Path.GetFileName(filePath) + "," + this.userName + "," + this.location));
+            System.IO.File.WriteAllText(filePath, (uploadedFileId + "," + Path.GetFileName(filePath) + "," + this.userName + "," + this.location));
             Console.WriteLine("Done Uploading");
 
         }
@@ -498,14 +498,14 @@ namespace GoogleDriveAPIExample
                 FileInfo[] files = directoryInfo.GetFiles();
                 foreach (var file in files)
                 {
-                    Console.WriteLine(file.Name + " id: " + File.ReadAllText(file.FullName));
+                    Console.WriteLine(file.Name + " id: " + System.IO.File.ReadAllText(file.FullName));
                 }
             }
         }
         public string readOneFile(string filepath)
         {
             int count = 1;
-            foreach (var line in File.ReadLines(filepath))
+            foreach (var line in System.IO.File.ReadLines(filepath))
             {
                 return line;
             }
@@ -553,7 +553,7 @@ namespace GoogleDriveAPIExample
         public void AddDataTofile(string name, string id)
         {
             string filePath = $"{this.location}\\data.txt";
-            using (StreamWriter writer = File.AppendText(filePath))
+            using (StreamWriter writer = System.IO.File.AppendText(filePath))
             {
                 writer.WriteLine($"{name},{id}");
             }
@@ -587,8 +587,8 @@ namespace GoogleDriveAPIExample
                 }
             }
 
-            File.Delete(filePath);
-            File.Move(tempFilePath, filePath);
+            System.IO.File.Delete(filePath);
+            System.IO.File.Move(tempFilePath, filePath);
 
             return true;
         }
@@ -621,8 +621,8 @@ namespace GoogleDriveAPIExample
                 }
             }
 
-            File.Delete(filePath);
-            File.Move(tempFilePath, filePath);
+            System.IO.File.Delete(filePath);
+            System.IO.File.Move(tempFilePath, filePath);
 
             return true;
         }
@@ -715,7 +715,7 @@ namespace GoogleDriveAPIExample
         }
         public void switchFileBetweenDrive(string filePath)
         {
-            Console.WriteLine(File.ReadAllText(filePath));
+            Console.WriteLine(System.IO.File.ReadAllText(filePath));
         }
         public void DownloadFile(string fileId, DriveService driveService, string fileType)
         {
@@ -863,7 +863,7 @@ namespace GoogleDriveAPIExample
             }
 
             // Di chuyển tệp tin nén vào thư mục đích
-            File.Move(zipFilePath, Path.Combine(saveFileLocation, zipName));
+            System.IO.File.Move(zipFilePath, Path.Combine(saveFileLocation, zipName));
         }
 
         private void OpenFile(string filePath)
@@ -1321,6 +1321,32 @@ namespace GoogleDriveAPIExample
 
                 UploadFolder_ver2(service,directoryPath, newParentFolderId);
             }
+        }
+        public IList<Google.Apis.Drive.v3.Data.File> geShareFiles(DriveService service)
+        {
+
+            try
+            {
+                // Gọi API để lấy danh sách các file được chia sẻ
+                FilesResource.ListRequest listRequest = service.Files.List();
+                listRequest.Q = "sharedWithMe=true";
+
+                // Bao gồm các trường cụ thể
+                listRequest.Fields = "files(id, name, mimeType, iconLink, owners)";
+
+                FileList fileList = listRequest.Execute();
+
+                // Trả về danh sách các file được chia sẻ
+                return fileList.Files;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting shared files: {ex.Message}");
+                return null;
+            }
+
+
+
         }
 
     }
