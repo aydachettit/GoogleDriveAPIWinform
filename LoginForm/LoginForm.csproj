@@ -122,9 +122,26 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Icons\icons8-home-50.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Icons\icons8-google-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\icons8-home-30.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\icons8-bin-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\icons8-bin-30.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\icons8-go-back-24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\icons8-search-30.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

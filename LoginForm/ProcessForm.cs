@@ -47,6 +47,7 @@ namespace LoginForm
             logoutButton.Text = "Logout";
             logoutButton.Location = new Point(50, 100);
             logoutButton.Click += LogoutButton_Click;
+            logoutButton.Hide();
             this.Controls.Add(logoutButton);
 
             apiService = new APIService();

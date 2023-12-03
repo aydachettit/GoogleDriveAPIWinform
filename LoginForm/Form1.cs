@@ -40,7 +40,8 @@ namespace LoginForm
                     if (line != "")
                     {
                         Label label = new Label();
-                        label.Text = line;
+                        label.Text = line.ToUpper();
+                        label.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
                         label.Click += new EventHandler(click_label);
                         Button closeButton = new Button();
                         closeButton.Text = "X";

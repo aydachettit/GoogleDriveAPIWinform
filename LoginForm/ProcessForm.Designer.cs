@@ -37,14 +37,10 @@
             this.downloadToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnBack = new System.Windows.Forms.Button();
-            this.btnOpenTrashFiles = new System.Windows.Forms.Button();
-            this.btnHome = new System.Windows.Forms.Button();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.RecoverMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.deletePermanentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbFileTyle = new System.Windows.Forms.ComboBox();
             this.txtSearchFileName = new System.Windows.Forms.TextBox();
@@ -53,6 +49,11 @@
             this.cmbOrderFiled = new System.Windows.Forms.ComboBox();
             this.cmbOrderType = new System.Windows.Forms.ComboBox();
             this.labelStatus = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.btnSearch = new System.Windows.Forms.Button();
+            this.btnHome = new System.Windows.Forms.Button();
+            this.btnOpenTrashFiles = new System.Windows.Forms.Button();
+            this.btnBack = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -65,7 +66,7 @@
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(0, 135);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(557, 292);
+            this.listView1.Size = new System.Drawing.Size(558, 292);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
@@ -124,40 +125,9 @@
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(560, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(558, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btnBack
-            // 
-            this.btnBack.Enabled = false;
-            this.btnBack.Location = new System.Drawing.Point(430, 80);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(75, 23);
-            this.btnBack.TabIndex = 3;
-            this.btnBack.Text = "Back";
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
-            // 
-            // btnOpenTrashFiles
-            // 
-            this.btnOpenTrashFiles.Location = new System.Drawing.Point(340, 80);
-            this.btnOpenTrashFiles.Name = "btnOpenTrashFiles";
-            this.btnOpenTrashFiles.Size = new System.Drawing.Size(75, 23);
-            this.btnOpenTrashFiles.TabIndex = 4;
-            this.btnOpenTrashFiles.Text = "Trash";
-            this.btnOpenTrashFiles.UseVisualStyleBackColor = true;
-            this.btnOpenTrashFiles.Click += new System.EventHandler(this.btnOpenTrashFiles_Click);
-            // 
-            // btnHome
-            // 
-            this.btnHome.Location = new System.Drawing.Point(260, 80);
-            this.btnHome.Name = "btnHome";
-            this.btnHome.Size = new System.Drawing.Size(75, 23);
-            this.btnHome.TabIndex = 5;
-            this.btnHome.Text = "Home";
-            this.btnHome.UseVisualStyleBackColor = true;
-            this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
             // 
             // contextMenuStrip2
             // 
@@ -183,11 +153,14 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.btnSearch);
+            this.groupBox1.Controls.Add(this.labelStatus);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.cmbFileTyle);
             this.groupBox1.Controls.Add(this.txtSearchFileName);
             this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(9, 4);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
@@ -197,24 +170,14 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Search";
             // 
-            // btnSearch
-            // 
-            this.btnSearch.Location = new System.Drawing.Point(328, 14);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(58, 23);
-            this.btnSearch.TabIndex = 4;
-            this.btnSearch.Text = "Search";
-            this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(163, 20);
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(173, 25);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(31, 13);
+            this.label2.Size = new System.Drawing.Size(39, 16);
             this.label2.TabIndex = 3;
             this.label2.Text = "Type";
             // 
@@ -225,39 +188,41 @@
             "All",
             "File",
             "Folder"});
-            this.cmbFileTyle.Location = new System.Drawing.Point(212, 17);
+            this.cmbFileTyle.Location = new System.Drawing.Point(219, 19);
             this.cmbFileTyle.Margin = new System.Windows.Forms.Padding(2);
             this.cmbFileTyle.Name = "cmbFileTyle";
-            this.cmbFileTyle.Size = new System.Drawing.Size(83, 21);
+            this.cmbFileTyle.Size = new System.Drawing.Size(83, 24);
             this.cmbFileTyle.TabIndex = 2;
             this.cmbFileTyle.SelectedIndexChanged += new System.EventHandler(this.cmbFileTyle_SelectedIndexChanged);
             // 
             // txtSearchFileName
             // 
-            this.txtSearchFileName.Location = new System.Drawing.Point(58, 19);
+            this.txtSearchFileName.Location = new System.Drawing.Point(74, 19);
             this.txtSearchFileName.Margin = new System.Windows.Forms.Padding(2);
             this.txtSearchFileName.Name = "txtSearchFileName";
-            this.txtSearchFileName.Size = new System.Drawing.Size(76, 20);
+            this.txtSearchFileName.Size = new System.Drawing.Size(76, 22);
             this.txtSearchFileName.TabIndex = 1;
             this.txtSearchFileName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 24);
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(4, 25);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 13);
+            this.label1.Size = new System.Drawing.Size(66, 16);
             this.label1.TabIndex = 0;
             this.label1.Text = "File name";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(351, 119);
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(337, 116);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(47, 13);
+            this.label3.Size = new System.Drawing.Size(59, 16);
             this.label3.TabIndex = 7;
             this.label3.Text = "Order by";
             // 
@@ -292,18 +257,72 @@
             // labelStatus
             // 
             this.labelStatus.AutoSize = true;
-            this.labelStatus.Location = new System.Drawing.Point(272, 110);
+            this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelStatus.Location = new System.Drawing.Point(475, 17);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(35, 13);
+            this.labelStatus.Size = new System.Drawing.Size(50, 16);
             this.labelStatus.TabIndex = 10;
             this.labelStatus.Text = "label4";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(418, 17);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(54, 16);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Status:";
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.Image = global::LoginForm.Properties.Resources.icons8_search_30;
+            this.btnSearch.Location = new System.Drawing.Point(315, 9);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(46, 34);
+            this.btnSearch.TabIndex = 4;
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
+            // btnHome
+            // 
+            this.btnHome.Image = global::LoginForm.Properties.Resources.icons8_home_30;
+            this.btnHome.Location = new System.Drawing.Point(9, 99);
+            this.btnHome.Name = "btnHome";
+            this.btnHome.Size = new System.Drawing.Size(46, 34);
+            this.btnHome.TabIndex = 5;
+            this.btnHome.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnHome.UseVisualStyleBackColor = true;
+            this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
+            // 
+            // btnOpenTrashFiles
+            // 
+            this.btnOpenTrashFiles.Image = global::LoginForm.Properties.Resources.icons8_bin_30;
+            this.btnOpenTrashFiles.Location = new System.Drawing.Point(61, 99);
+            this.btnOpenTrashFiles.Name = "btnOpenTrashFiles";
+            this.btnOpenTrashFiles.Size = new System.Drawing.Size(46, 34);
+            this.btnOpenTrashFiles.TabIndex = 4;
+            this.btnOpenTrashFiles.UseVisualStyleBackColor = true;
+            this.btnOpenTrashFiles.Click += new System.EventHandler(this.btnOpenTrashFiles_Click);
+            // 
+            // btnBack
+            // 
+            this.btnBack.Enabled = false;
+            this.btnBack.Image = global::LoginForm.Properties.Resources.icons8_go_back_24;
+            this.btnBack.Location = new System.Drawing.Point(113, 99);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(46, 34);
+            this.btnBack.TabIndex = 3;
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // ProcessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(560, 431);
-            this.Controls.Add(this.labelStatus);
+            this.BackColor = System.Drawing.SystemColors.Info;
+            this.ClientSize = new System.Drawing.Size(558, 431);
             this.Controls.Add(this.cmbOrderType);
             this.Controls.Add(this.cmbOrderFiled);
             this.Controls.Add(this.label3);
@@ -351,5 +370,6 @@
         private System.Windows.Forms.ComboBox cmbOrderType;
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.ToolStripMenuItem downloadToToolStripMenuItem;
+        private System.Windows.Forms.Label label4;
     }
 }

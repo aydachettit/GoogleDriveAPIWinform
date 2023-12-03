@@ -1019,7 +1019,7 @@ namespace GoogleDriveAPIExample
             // Tạo yêu cầu để lấy danh sách các tệp tin và thư mục trong thùng rác
             var request = driveService.Files.List();
             request.Q = "trashed = true"; // Lọc chỉ lấy các tệp tin và thư mục trong thùng rác
-            request.Fields = "files(id, name, mimeType, iconLink)";
+            request.Fields = "files(id, name, mimeType, iconLink, owners)";
             // Thực hiện yêu cầu và lấy danh sách các tệp tin và thư mục
             var results = request.Execute();
             var files = results.Files;
