@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProcessForm));
             this.listView1 = new System.Windows.Forms.ListView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,6 +43,7 @@
             this.deletePermanentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.labelStatus = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbFileTyle = new System.Windows.Forms.ComboBox();
@@ -51,7 +53,6 @@
             this.cmbOrderFiled = new System.Windows.Forms.ComboBox();
             this.cmbOrderType = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.btnHome = new System.Windows.Forms.Button();
             this.btnOpenTrashFiles = new System.Windows.Forms.Button();
             this.btnBack = new System.Windows.Forms.Button();
@@ -181,6 +182,17 @@
             this.label4.TabIndex = 11;
             this.label4.Text = "Status:";
             // 
+            // btnSearch
+            // 
+            this.btnSearch.Image = global::LoginForm.Properties.Resources.icons8_search_30;
+            this.btnSearch.Location = new System.Drawing.Point(315, 9);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(46, 34);
+            this.btnSearch.TabIndex = 4;
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
             // labelStatus
             // 
             this.labelStatus.AutoSize = true;
@@ -285,17 +297,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // btnSearch
-            // 
-            this.btnSearch.Image = global::LoginForm.Properties.Resources.icons8_search_30;
-            this.btnSearch.Location = new System.Drawing.Point(315, 9);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(46, 34);
-            this.btnSearch.TabIndex = 4;
-            this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
-            // 
             // btnHome
             // 
             this.btnHome.Image = global::LoginForm.Properties.Resources.icons8_home_30;
@@ -344,6 +345,7 @@
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.listView1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ProcessForm";
             this.Text = "ProcessForm";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ProcessForm_FormClosed);
