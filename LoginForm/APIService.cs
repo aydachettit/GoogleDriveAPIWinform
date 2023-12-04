@@ -989,7 +989,7 @@ namespace GoogleDriveAPIExample
                 queryBuilder = $"{queryBuilder} and {DriveSearchFileParams.NameContains} '{searchParams.FileName}'";
             }
             request.Q = queryBuilder;
-            request.Fields = "files(id, name, mimeType, iconLink)";
+            request.Fields = "files(id, name, mimeType, iconLink,owners)";
             //sort
             if (!string.IsNullOrEmpty(searchParams.SortBy))
             {

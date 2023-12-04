@@ -454,7 +454,7 @@ namespace LoginForm
                         string type = draggedItem.SubItems[2].Text;
                         APIService secondapi = new APIService();
                         DriveService secondService = secondapi.automatic(owner);
-                       
+
                         if (!Directory.Exists(dowloadPath))
                         {
                             Directory.CreateDirectory(dowloadPath);
@@ -463,7 +463,7 @@ namespace LoginForm
                         //string fileType = GetFileType(filefullName);
                         whereFileAt = Path.Combine(dowloadPath, filefullName);
                         secondapi.DownloadFileOrFolder(secondService, file_id, dowloadPath);
-                       
+
 
                         // Add the dragged item to ListView B
                         //listView1.Items.Add((ListViewItem)draggedItem.Clone());
@@ -479,9 +479,10 @@ namespace LoginForm
                     {
                         if (size == 89)
                         {
-                            Directory.Delete(dowloadPath,true);
+                            Directory.Delete(dowloadPath, true);
                         }
                     }
+                    MessageBox.Show("Update Complete", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 }
                 else
@@ -530,6 +531,7 @@ namespace LoginForm
                         }
 
                     }
+                    MessageBox.Show("Update Complete", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 btnHome.PerformClick();
             }
@@ -547,8 +549,8 @@ namespace LoginForm
                 {
                     if (Directory.Exists(item)) // It's a folder
                     {
-                       // string saveFolderName = apiService.userName + "_save";
-                        CopyFolder(item,saveFolderPath);
+                        // string saveFolderName = apiService.userName + "_save";
+                        CopyFolder(item, saveFolderPath);
                     }
                     else if (File.Exists(item)) // It's a file
                     {
@@ -557,6 +559,8 @@ namespace LoginForm
                         File.Copy(item, saveFilePath);
                         UpdateListViewItem(Path.GetFileName(item), null);
                     }
+
+                    MessageBox.Show("File-Folder Have been save", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
@@ -712,6 +716,7 @@ namespace LoginForm
                     listView1.Items.Remove(selectedItem);
                     clientSelectedItem--;
                 }
+                MessageBox.Show("Object has been moved to bin", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }
         }
@@ -769,6 +774,7 @@ namespace LoginForm
                     listView1.Items.Remove(selectedItem);
                     clientSelectedItem--;
                 }
+                MessageBox.Show("Object has been deleted permanent", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }
         }
@@ -881,6 +887,7 @@ namespace LoginForm
 
                     }
                 }
+                MessageBox.Show("Download complete", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
