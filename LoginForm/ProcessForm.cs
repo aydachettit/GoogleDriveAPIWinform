@@ -157,7 +157,7 @@ namespace LoginForm
                 }));
 
                 // Ngủ 1 giây trước khi kiểm tra lại
-                Thread.Sleep(100000);
+                Thread.Sleep(10000);
             }
         }
         private void UploadItemsToGoogleDrive()
@@ -558,10 +558,9 @@ namespace LoginForm
 
                         File.Copy(item, saveFilePath);
                         UpdateListViewItem(Path.GetFileName(item), null);
-                    }
-
-                    MessageBox.Show("File-Folder Have been save", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }                   
                 }
+                MessageBox.Show("File-Folder Have been save", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
         private void CopyFolder(string sourceFolder, string destinationFolder)
@@ -818,6 +817,7 @@ namespace LoginForm
                             Console.WriteLine("Không thể mở file: " + ex.Message);
                         }
                     }
+                    MessageBox.Show("Download complete", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
