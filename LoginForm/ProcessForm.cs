@@ -145,8 +145,11 @@ namespace LoginForm
                         labelStatus.Text = "Online";
                         labelStatus.ForeColor = Color.FromArgb(0, 255, 0);
                         string folderPath = Path.Combine(Environment.CurrentDirectory,Path.GetFileName(apiService.location)+ "_save");
-                        UploadItemsToGoogleDrive();
-                        btnHome.PerformClick();
+                        int loadFLag=UploadItemsToGoogleDrive();
+                        if (loadFLag == 1)
+                        {
+                            btnHome.PerformClick();
+                        }
                     }
                     else
                     {
@@ -157,12 +160,13 @@ namespace LoginForm
                 }));
 
                 // Ngủ 1 giây trước khi kiểm tra lại
-                Thread.Sleep(10000);
+                Thread.Sleep(1000);
             }
         }
-        private void UploadItemsToGoogleDrive()
+        private int UploadItemsToGoogleDrive()
         {
             string folderPath = Path.Combine(Environment.CurrentDirectory, Path.GetFileName(apiService.location)+"_save");
+            int flag = 0;
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -173,14 +177,17 @@ namespace LoginForm
 
             foreach (string filePath in files)
             {
+                flag = 1;
                 // Upload each file to Google Drive
                 apiService.uploadFile(service, filePath, null);
             }
             foreach (string fPath in folders)
             {
+                flag = 1;
                 apiService.UploadFolder(service, fPath, null);
             }
             DeleteFolderContents(folderPath);
+            return flag;
         }
         private void DeleteFolderContents(string folderPath)
         {
