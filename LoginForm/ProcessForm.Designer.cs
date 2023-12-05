@@ -56,6 +56,8 @@
             this.btnHome = new System.Windows.Forms.Button();
             this.btnOpenTrashFiles = new System.Windows.Forms.Button();
             this.btnBack = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.progressLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -329,12 +331,29 @@
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(228, 116);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(100, 19);
+            this.progressBar1.TabIndex = 11;
+            // 
+            // progressLabel
+            // 
+            this.progressLabel.AutoSize = true;
+            this.progressLabel.Location = new System.Drawing.Point(233, 97);
+            this.progressLabel.Name = "progressLabel";
+            this.progressLabel.Size = new System.Drawing.Size(0, 13);
+            this.progressLabel.TabIndex = 12;
+            // 
             // ProcessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Info;
             this.ClientSize = new System.Drawing.Size(558, 431);
+            this.Controls.Add(this.progressLabel);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.cmbOrderType);
             this.Controls.Add(this.cmbOrderFiled);
@@ -387,5 +406,7 @@
         private System.Windows.Forms.ToolStripMenuItem downloadToToolStripMenuItem;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label progressLabel;
     }
 }

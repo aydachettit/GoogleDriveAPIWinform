@@ -29,6 +29,7 @@ namespace LoginForm
         private System.Windows.Forms.Timer timer;
         static string folderMasterId = null;
         private BackgroundWorker internetCheckWorker;
+        private BackgroundWorker downloadPercentageChecking;
         private List<string> currentFolderPath = new List<string>();
         private List<string> pre_current_ids = new List<string>();
 
@@ -68,6 +69,7 @@ namespace LoginForm
             loadFileFromDrive(files);
             pre_current_ids.Add("root");
             btnBack.Enabled = false;
+            progressBar1.Hide();
             //wat.Start();
         }
         public ProcessForm()
@@ -127,8 +129,12 @@ namespace LoginForm
 
             // Bắt đầu kiểm tra liên tục
             internetCheckWorker.RunWorkerAsync();
+            ///
             //timer.Start();
         }
+
+       
+
         private void InternetCheckWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             while (!internetCheckWorker.CancellationPending)
@@ -143,19 +149,38 @@ namespace LoginForm
                     {
                         // Hiển thị thông báo có kết nối internet
                         labelStatus.Text = "Online";
+
+                        btnHome.Enabled = true;
                         labelStatus.ForeColor = Color.FromArgb(0, 255, 0);
                         string folderPath = Path.Combine(Environment.CurrentDirectory,Path.GetFileName(apiService.location)+ "_save");
-                        int loadFLag=UploadItemsToGoogleDrive();
-                        if (loadFLag == 1)
+                        int loadFLag=checkingIfNeedtoUpdate();
+                        if (loadFLag==1)
                         {
+                            UploadItemsToGoogleDrive();
                             btnHome.PerformClick();
                         }
+                        deleteToolStripMenuItem.Enabled = true;
+                        downloadToToolStripMenuItem.Enabled = true;
+                        moveToTrashCanToolStripMenuItem.Enabled = true;
+                        btnOpenTrashFiles.Enabled = true;
+
+                        renameToolStripMenuItem.Enabled = true;
+                        button1.Enabled = true;
+                        btnSearch.Enabled = true;
                     }
                     else
                     {
                         // Hiển thị thông báo không có kết nối internet
                         labelStatus.Text = "Offline";
                         labelStatus.ForeColor = Color.FromArgb(255, 0, 0);
+                        deleteToolStripMenuItem.Enabled = false;
+                        downloadToToolStripMenuItem.Enabled = false;
+                        moveToTrashCanToolStripMenuItem.Enabled = false;
+                        btnOpenTrashFiles.Enabled = false;
+                        renameToolStripMenuItem.Enabled = false;
+                        button1.Enabled = false;
+                        btnSearch.Enabled = false;
+                        btnHome.Enabled = false;
                     }
                 }));
 
@@ -163,10 +188,20 @@ namespace LoginForm
                 Thread.Sleep(1000);
             }
         }
-        private int UploadItemsToGoogleDrive()
+        private int checkingIfNeedtoUpdate()
+        {
+            string folderPath = Path.Combine(Environment.CurrentDirectory, Path.GetFileName(apiService.location) + "_save");
+            
+            if (Directory.Exists(folderPath))
+            {
+                return 1;
+            }
+            return 0;
+        }
+        private void UploadItemsToGoogleDrive()
         {
             string folderPath = Path.Combine(Environment.CurrentDirectory, Path.GetFileName(apiService.location)+"_save");
-            int flag = 0;
+            
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -174,20 +209,27 @@ namespace LoginForm
             // Get all files inside the folder
             string[] files = Directory.GetFiles(folderPath);
             string[] folders = Directory.GetDirectories(folderPath);
-
+            int totalFile = files.Length + folders.Length;
+            int uploadedFile = 0;
+            int percentage = 0;
+            progressBar1.Show();
             foreach (string filePath in files)
             {
-                flag = 1;
+                progressLabel.Text = "Uploading..." + Path.GetFileName(filePath);
                 // Upload each file to Google Drive
                 apiService.uploadFile(service, filePath, null);
+                uploadedFile++;
+                percentage = (uploadedFile * 100) / totalFile;
             }
             foreach (string fPath in folders)
             {
-                flag = 1;
+                progressLabel.Text = "Uploading..." + Path.GetFileName(fPath);
                 apiService.UploadFolder(service, fPath, null);
+                uploadedFile++;
+                percentage = (uploadedFile * 100) / totalFile;
             }
+            uploadedMesssageBox();
             DeleteFolderContents(folderPath);
-            return flag;
         }
         private void DeleteFolderContents(string folderPath)
         {
@@ -369,80 +411,104 @@ namespace LoginForm
             if (listView1.SelectedItems.Count > 0)
             {
                 int clientSelectedItem = listView1.SelectedItems.Count;
+
+                progressBar1.Show();
+                int totalFile = clientSelectedItem;
+                int deletedFile = 0;
                 while (clientSelectedItem > 0)
                 {
                     ListViewItem selectedItem = listView1.SelectedItems[0];
                     string id = selectedItem.SubItems[1].Text;
                     string fileName = selectedItem.Text;
                     string filePath = Path.Combine(apiService.location, fileName);
+                    progressLabel.Text = "Deleting... " + fileName;
                     // Kiểm tra nếu đối tượng là một thư mục
                     //text/plain
                     //application/vnd.google-apps.folder
                     apiService.DeleteFolderAndContents(service, id);
+                    deletedFile++;
+                    int currentPercentage = (deletedFile * 100) / totalFile;
+                    progressBar1.Value = currentPercentage;
                     // Xóa item khỏi ListView
                     listView1.Items.Remove(selectedItem);
                     clientSelectedItem--;
                 }
+                deleteMesssageBox();
 
             }
         }
-        //Không sử dụng nữa
-        private void listView1_DragDrop(object sender, DragEventArgs e)
+        private void deleteMesssageBox()
         {
-            wat.Stop();
-            // Lấy danh sách các đường dẫn của các file/thư mục được thả
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-            // Xử lý từng đối tượng được thả
-            foreach (string file in files)
+            progressLabel.Text = "Delete Completed!";
+            progressBar1.Value = progressBar1.Maximum;
+            DialogResult result = MessageBox.Show("Delete Completed.", "Alert Message", MessageBoxButtons.OK);
+            // Kiểm tra kết quả
+            if (result == DialogResult.OK)
             {
-                // Kiểm tra nếu là một thư mục
-                if (Directory.Exists(file))
-                {
-                    // Lấy tên thư mục từ đường dẫn
-                    string folderName = Path.GetFileName(file);
-                    // Tạo đường dẫn đích bằng cách kết hợp đường dẫn thư mục đích và tên thư mục
-                    string destinationPath = Path.Combine(apiService.location, folderName);
 
-                    // Copy thư mục và nội dung của nó sang thư mục đích
-                    Directory.CreateDirectory(destinationPath);
-                    CopyDirectory(file, destinationPath);
-
-                    // Tạo một ListViewItem mới với tên thư mục
-                    ListViewItem folderItem = new ListViewItem(folderName);
-
-                    // Gắn đường dẫn vào thuộc tính Tag của ListViewItem
-                    folderItem.Tag = file;
-
-                    // Thêm ListViewItem vào ListView
-                    listView1.Items.Add(folderItem);
-
-                    apiService.createFolder(folderName, service, Path.Combine(apiService.location, folderName), null);
-                }
-                // Kiểm tra nếu là một file
-                else if (File.Exists(file))
-                {
-                    // Lấy tên file từ đường dẫn
-                    string fileName = Path.GetFileName(file);
-                    string destinationFilePath = Path.Combine(apiService.location, fileName);
-
-                    // Copy file vào thư mục đích
-
-
-                    // Tạo một ListViewItem mới với tên file
-                    ListViewItem fileItem = new ListViewItem(fileName);
-
-                    // Gắn đường dẫn vào thuộc tính Tag của ListViewItem
-                    fileItem.Tag = file;
-
-                    // Thêm ListViewItem vào ListView
-                    listView1.Items.Add(fileItem);
-                    File.Copy(file, destinationFilePath);
-
-                }
+                progressLabel.Text = "";
+                progressBar1.Hide();
+                progressBar1.Value = 0;
             }
         }
-        //Chưa tối ưu , cần chỉnh sửa
+        private void uploadedMesssageBox()
+        {
+            progressLabel.Text = "Upload Completed!";
+            progressBar1.Value = progressBar1.Maximum;
+            DialogResult result = MessageBox.Show("Uploaded Completed.", "Alert Message", MessageBoxButtons.OK);
+            // Kiểm tra kết quả
+            if (result == DialogResult.OK)
+            {
+
+                progressLabel.Text = "";
+                progressBar1.Hide();
+                progressBar1.Value = 0;
+            }
+        }
+        private void movedToBinMesssageBox()
+        {
+            progressLabel.Text = "Completed Moving data to bin!";
+            progressBar1.Value = progressBar1.Maximum;
+            DialogResult result = MessageBox.Show("Completed moving. ", "Alert Message", MessageBoxButtons.OK);
+            // Kiểm tra kết quả
+            if (result == DialogResult.OK)
+            {
+
+                progressLabel.Text = "";
+                progressBar1.Hide();
+                progressBar1.Value = 0;
+            }
+        }
+        private void RecoverMesssageBox()
+        {
+            progressLabel.Text = "Completed Recovering files from Bin!";
+            progressBar1.Value = progressBar1.Maximum;
+            DialogResult result = MessageBox.Show("Completed recovering. ", "Alert Message", MessageBoxButtons.OK);
+            // Kiểm tra kết quả
+            if (result == DialogResult.OK)
+            {
+
+                progressLabel.Text = "";
+                progressBar1.Hide();
+                progressBar1.Value = 0;
+            }
+        }
+        private void savedMesssageBox()
+        {
+            progressLabel.Text = "Save Completed!";
+            progressBar1.Value = progressBar1.Maximum;
+            DialogResult result = MessageBox.Show("Your data have been saved.", "Alert Message", MessageBoxButtons.OK);
+            // Kiểm tra kết quả
+            if (result == DialogResult.OK)
+            {
+
+                progressLabel.Text = "";
+                progressBar1.Hide();
+                progressBar1.Value = 0;
+            }
+        }
+
+
         private void listView1_DragDrop2(object sender, DragEventArgs e)
         {
             bool isConnected = CheckInternetConnection();
@@ -450,9 +516,12 @@ namespace LoginForm
             {
                 if (e.Data.GetDataPresent(typeof(List<ListViewItem>)))
                 {
+                    progressBar1.Show();
                     List<ListViewItem> draggedItems = (List<ListViewItem>)e.Data.GetData(typeof(List<ListViewItem>));
                     string whereFileAt = null;
                     string dowloadPath = Path.Combine(Environment.CurrentDirectory, "Storage");
+                    int totalFile = draggedItems.Count+2;
+                    int uploadtedFile = 0;
                     // Tương tác với tất cả các ListViewItem được chọn
                     foreach (ListViewItem draggedItem in draggedItems)
                     {
@@ -470,7 +539,10 @@ namespace LoginForm
                         //string fileType = GetFileType(filefullName);
                         whereFileAt = Path.Combine(dowloadPath, filefullName);
                         secondapi.DownloadFileOrFolder(secondService, file_id, dowloadPath);
-
+                        progressLabel.Text = "Uploading....";
+                        uploadtedFile++;
+                        int percentage = (uploadtedFile * 100) / totalFile;
+                        progressBar1.Value = percentage;
 
                         // Add the dragged item to ListView B
                         //listView1.Items.Add((ListViewItem)draggedItem.Clone());
@@ -481,6 +553,7 @@ namespace LoginForm
                         parentFolderId = null;
                     }
                     apiService.UploadFolder_ver2(service, dowloadPath, parentFolderId);
+                    uploadedMesssageBox();
                     int size = dowloadPath.Length;
                     if (Directory.Exists(dowloadPath))
                     {
@@ -489,14 +562,15 @@ namespace LoginForm
                             Directory.Delete(dowloadPath, true);
                         }
                     }
-                    MessageBox.Show("Update Complete", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                   
                 }
                 else
                 {
                     // Lấy danh sách các đường dẫn của các file/thư mục được thả
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
+                    progressBar1.Show();
+                    int totalFile = files.Length;
+                    int uploadtedFile = 0;
                     // Xử lý từng đối tượng được thả
                     foreach (string file in files)
                     {
@@ -504,7 +578,7 @@ namespace LoginForm
                         if (Directory.Exists(file))
                         {
                             string folderName = Path.GetFileName(file);
-
+                            progressLabel.Text = "Uploading..." + folderName;
                             // Tạo một ListViewItem mới với tên thư mục
                             ListViewItem folderItem = new ListViewItem(folderName);
 
@@ -519,12 +593,14 @@ namespace LoginForm
                                 parentFolderId = null;
                             }
                             apiService.UploadFolder(service, file, parentFolderId);
+                           
                         }
                         // Kiểm tra nếu là một file
                         else if (File.Exists(file))
                         {
                             // Lấy tên file từ đường dẫn
                             string fileName = Path.GetFileName(file);
+                            progressLabel.Text = "Uploading..." + fileName;
                             string parentFolderId = pre_current_ids.ElementAt(pre_current_ids.Count - 1);
                             if (parentFolderId == "root")
                             {
@@ -536,38 +612,57 @@ namespace LoginForm
                             item.Tag = fileId;
                             listView1.Items.Add(item);
                         }
+                        uploadtedFile++;
+                        int percentage = (uploadtedFile * 100) / totalFile;
 
                     }
-                    MessageBox.Show("Update Complete", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    uploadedMesssageBox();
                 }
                 btnHome.PerformClick();
             }
             else
             {
-                string[] filesOrFolders = (string[])e.Data.GetData(DataFormats.FileDrop);
-                string wahtizd = Path.GetFileName(apiService.location);
-                string saveFolderName = wahtizd + "_save";
-                string saveFolderPath = Path.Combine(Environment.CurrentDirectory, saveFolderName);
-                if (!Directory.Exists(saveFolderPath))
-                {
-                    Directory.CreateDirectory(saveFolderPath);
-                }
-                foreach (string item in filesOrFolders)
-                {
-                    if (Directory.Exists(item)) // It's a folder
-                    {
-                        // string saveFolderName = apiService.userName + "_save";
-                        CopyFolder(item, saveFolderPath);
-                    }
-                    else if (File.Exists(item)) // It's a file
-                    {
-                        string saveFilePath = Path.Combine(saveFolderPath, Path.GetFileName(item));
+                DialogResult result = MessageBox.Show("There's no connection!, Do you want to continue?\n If yes we'll save it and uploaded later for you, when you have your connection back.", "Alert Message", MessageBoxButtons.YesNo);
 
-                        File.Copy(item, saveFilePath);
-                        UpdateListViewItem(Path.GetFileName(item), null);
-                    }                   
+                // Kiểm tra kết quả
+                if (result == DialogResult.Yes)
+                {
+                    string[] filesOrFolders = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    string wahtizd = Path.GetFileName(apiService.location);
+                    string saveFolderName = wahtizd + "_save";
+                    string saveFolderPath = Path.Combine(Environment.CurrentDirectory, saveFolderName);
+                    progressBar1.Show();
+                    int totalFile = filesOrFolders.Length;
+                    int savedFile = 0;
+                    if (!Directory.Exists(saveFolderPath))
+                    {
+                        Directory.CreateDirectory(saveFolderPath);
+                    }
+                    foreach (string item in filesOrFolders)
+                    {
+                        if (Directory.Exists(item)) // It's a folder
+                        {
+                            // string saveFolderName = apiService.userName + "_save";
+                            CopyFolder(item, saveFolderPath);
+                        }
+                        else if (File.Exists(item)) // It's a file
+                        {
+                            string saveFilePath = Path.Combine(saveFolderPath, Path.GetFileName(item));
+
+                            File.Copy(item, saveFilePath);
+                            UpdateListViewItem(Path.GetFileName(item), null);
+                        }
+                        savedFile++;
+                        int persentage = (savedFile * 100) / totalFile;
+                        progressBar1.Value = persentage;
+                    }
+                    savedMesssageBox();
                 }
-                MessageBox.Show("File-Folder Have been save", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else
+                {
+                    
+                }
+                
             }
         }
         private void CopyFolder(string sourceFolder, string destinationFolder)
@@ -707,13 +802,18 @@ namespace LoginForm
 
             if (listView1.SelectedItems.Count > 0)
             {
+                progressBar1.Show();
                 int clientSelectedItem = listView1.SelectedItems.Count;
+                int totalFile = clientSelectedItem;
+                int movedFile = 0;
+                int percentage = 0;
                 while (clientSelectedItem > 0)
                 {
                     ListViewItem selectedItem = listView1.SelectedItems[0];
                     string id = selectedItem.SubItems[1].Text;
                     string fileName = selectedItem.Text;
                     string filePath = Path.Combine(apiService.location, fileName);
+                    progressLabel.Text = "Moving " + fileName + " to Bin..";
                     // Kiểm tra nếu đối tượng là một thư mục
                     //text/plain
                     //application/vnd.google-apps.folder
@@ -721,9 +821,11 @@ namespace LoginForm
                     // Xóa item khỏi ListView
                     listView1.Items.Remove(selectedItem);
                     clientSelectedItem--;
+                    movedFile++;
+                    percentage = (movedFile * 100) / totalFile;
+                    progressBar1.Value = percentage;
                 }
-                MessageBox.Show("Object has been moved to bin", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                movedToBinMesssageBox();
             }
         }
 
@@ -741,16 +843,25 @@ namespace LoginForm
 
             if (listView1.SelectedItems.Count > 0)
             {
+                progressBar1.Show();
                 int clientSelectedItem = listView1.SelectedItems.Count;
+                int totalFile = clientSelectedItem;
+                int recoveredFile = 0;
+                int percentage = 0;
                 while (clientSelectedItem > 0)
                 {
                     ListViewItem selectedItem = listView1.SelectedItems[0];
                     string id = selectedItem.SubItems[1].Text;
                     string fileName = selectedItem.Text;
+                    progressLabel.Text = "Recovering... " + fileName;
                     apiService.RestoreFileFromTrash(id, service);
                     listView1.Items.Remove(selectedItem);
                     clientSelectedItem--;
+                    recoveredFile++;
+                    percentage = (recoveredFile * 100) / totalFile;
+                    progressBar1.Value = percentage;
                 }
+                RecoverMesssageBox();
 
             }
         }
@@ -770,18 +881,25 @@ namespace LoginForm
 
             if (listView1.SelectedItems.Count > 0)
             {
+                progressBar1.Show();
                 int clientSelectedItem = listView1.SelectedItems.Count;
+                int totalFile = clientSelectedItem;
+                int deletedFile = 0;
+                int percentage = 0;
                 while (clientSelectedItem > 0)
                 {
                     ListViewItem selectedItem = listView1.SelectedItems[0];
                     string id = selectedItem.SubItems[1].Text;
                     string fileName = selectedItem.Text;
+                    progressLabel.Text = "Deleting..." + fileName;
                     apiService.DeleteFolderAndContents(service, id);
                     listView1.Items.Remove(selectedItem);
                     clientSelectedItem--;
+                    deletedFile++;
+                    percentage = (deletedFile * 100) / totalFile;
+                    progressBar1.Value = percentage;
                 }
-                MessageBox.Show("Object has been deleted permanent", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                deleteMesssageBox();
             }
         }
 
@@ -789,6 +907,7 @@ namespace LoginForm
         {
             if (listView1.SelectedItems.Count == 1)
             {
+                progressBar1.Show();
                 ListViewItem selectedItem = listView1.SelectedItems[0];
                 string fileName = selectedItem.Text;
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -814,7 +933,9 @@ namespace LoginForm
                         }
                         string folderId = selectedItem.SubItems[1].Text;
                         string directoryPath = Path.GetDirectoryName(folderPath);
+                        progressLabel.Text = "Downloading... " + selectedItem.SubItems[4].Text;
                         apiService.DownloadFolder(service, folderId, Path.Combine(directoryPath, selectedItem.SubItems[4].Text));
+                        downloadFinishedBox();
                         try
                         {
                             Process.Start(directoryPath);
@@ -824,7 +945,6 @@ namespace LoginForm
                             Console.WriteLine("Không thể mở file: " + ex.Message);
                         }
                     }
-                    MessageBox.Show("Download complete", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
@@ -845,35 +965,18 @@ namespace LoginForm
                     string directoryPath = Path.GetDirectoryName(filePath);
                     string id = apiService.GetFileOrFolderId(service, fileName);
                     string fileType = GetFileType(fileName);
+                    progressLabel.Text = "Downloading: " + selectedItem.SubItems[4].Text;
                     apiService.DownloadFile(id, service, fileType, directoryPath, fileName);
+                    downloadFinishedBox();
+
                 }
 
             }
             if (listView1.SelectedItems.Count > 1)
             {
+                progressBar1.Show();
                 List<string> selectedFileIds = new List<string>();
 
-
-                //SaveFileDialog saveFileDialog = new SaveFileDialog();
-                //string today = Convert.ToString(DateTime.Now);
-                //string fileName = "Drive-dowload-" + today + ".zip";
-                //fileName = fileName.Replace(":", "");
-                //fileName = fileName.Replace("/", "");
-                //fileName = fileName.Replace(" ", "");
-                //saveFileDialog.FileName = fileName;
-                //// Thiết lập các tùy chọn khác cho hộp thoại
-                //saveFileDialog.Filter = "All Files (*.*)|*.*";
-                //saveFileDialog.Title = "Save File";
-                //string filePath = null;
-                //// Hiển thị hộp thoại và kiểm tra kết quả
-                //if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                //{
-                //    // Lấy đường dẫn tệp tin đã chọn
-                //    filePath = saveFileDialog.FileName;
-
-                //    // Tiến hành xử lý lưu tệp tin
-                //    // ...
-                //}
                 var folderBrowserDialog1 = new FolderBrowserDialog();
 
                 // Show the FolderBrowserDialog.
@@ -883,21 +986,41 @@ namespace LoginForm
                 {
                     filePath = folderBrowserDialog1.SelectedPath;
                    //Do your work here!
-    }
+                }
                 if (filePath != null)
                 {
+                    int totalFile = listView1.SelectedItems.Count;
+                    int downloadedFile = 0;
                     foreach (ListViewItem selectedItem in listView1.SelectedItems)
                     {
                         // Lấy giá trị ID từ SubItems
                         string id = selectedItem.SubItems[1].Text;
+                        progressLabel.Text = "Downloading..." + selectedItem.SubItems[4].Text;
                         apiService.DownloadFileOrFolder(service, id, filePath);
+                        downloadedFile++;
+                        int progressPercentage = (downloadedFile * 100) / totalFile;
+                        progressBar1.Value = progressPercentage;
 
                     }
+                    downloadFinishedBox();
                 }
-                MessageBox.Show("Download complete", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+        }
+        private void downloadFinishedBox()
+        {
+            progressLabel.Text = "Download finished!";
+            progressBar1.Value = progressBar1.Maximum;
+            DialogResult result = MessageBox.Show("Download Completed.", "Alert Message", MessageBoxButtons.OK);
+            // Kiểm tra kết quả
+            if (result == DialogResult.OK)
+            {
+
+                progressLabel.Text = "";
+                progressBar1.Hide();
+                progressBar1.Value = 0;
             }
         }
-
         private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
