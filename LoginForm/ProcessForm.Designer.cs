@@ -58,15 +58,18 @@
             this.btnBack = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.progressLabel = new System.Windows.Forms.Label();
+            this.contextMenuStrip3 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.createNewFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.contextMenuStrip3.SuspendLayout();
             this.SuspendLayout();
             // 
             // listView1
             // 
             this.listView1.AllowDrop = true;
-            this.listView1.ContextMenuStrip = this.contextMenuStrip1;
+            this.listView1.ContextMenuStrip = this.contextMenuStrip3;
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(0, 135);
             this.listView1.Name = "listView1";
@@ -346,6 +349,20 @@
             this.progressLabel.Size = new System.Drawing.Size(0, 13);
             this.progressLabel.TabIndex = 12;
             // 
+            // contextMenuStrip3
+            // 
+            this.contextMenuStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createNewFolderToolStripMenuItem});
+            this.contextMenuStrip3.Name = "contextMenuStrip3";
+            this.contextMenuStrip3.Size = new System.Drawing.Size(181, 48);
+            // 
+            // createNewFolderToolStripMenuItem
+            // 
+            this.createNewFolderToolStripMenuItem.Name = "createNewFolderToolStripMenuItem";
+            this.createNewFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createNewFolderToolStripMenuItem.Text = "Create new folder";
+            this.createNewFolderToolStripMenuItem.Click += new System.EventHandler(this.createNewFolderToolStripMenuItem_Click);
+            // 
             // ProcessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -373,6 +390,7 @@
             this.contextMenuStrip2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.contextMenuStrip3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -408,5 +426,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label progressLabel;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip3;
+        private System.Windows.Forms.ToolStripMenuItem createNewFolderToolStripMenuItem;
     }
 }

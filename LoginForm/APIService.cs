@@ -1345,8 +1345,28 @@ namespace GoogleDriveAPIExample
                 return null;
             }
 
+        }
+        public void CreateEmptyFolder(DriveService service,string parentFolderId, string folderName)
+        {
+            // Kiểm tra xem thư mục cha có tồn tại hay không
+            if (parentFolderId == null)
+            {
+                throw new InvalidOperationException("Parent folder does not exist.");
+            }
 
+            // Tạo đối tượng File mới đại diện cho thư mục cần tạo
+            var folderMetadata = new Google.Apis.Drive.v3.Data.File
+            {
+                Name = folderName,
+                MimeType = "application/vnd.google-apps.folder",
+                Parents = new List<string> { parentFolderId }
+            };
 
+            // Gửi yêu cầu tạo thư mục và nhận về đối tượng File đại diện cho thư mục đã tạo
+            Google.Apis.Drive.v3.Data.File newFolder = service.Files.Create(folderMetadata).Execute();
+
+            // In thông tin về thư mục đã tạo
+            Console.WriteLine($"Created folder: {newFolder.Name} (ID: {newFolder.Id})");
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using Google.Apis.Drive.v3;
 using GoogleDriveAPIExample;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -399,7 +400,14 @@ namespace LoginForm
             {
                 if (listView1.SelectedItems.Count > 0)
                 {
-                    contextMenuStrip1.Show(listView1, e.Location);
+                    if (listView1.ContextMenuStrip == this.contextMenuStrip2)
+                    {
+                        listView1.ContextMenuStrip = null;
+                    }
+                    else
+                    {
+                        listView1.ContextMenuStrip = contextMenuStrip1;
+                    }
                 }
             }
         }
@@ -1093,6 +1101,40 @@ namespace LoginForm
             if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, "temp")))
             {
                 Directory.Delete(Path.Combine(Environment.CurrentDirectory, "temp"), true);
+            }
+        }
+
+        private void createNewFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string currentLocation = pre_current_ids.Last();
+            string enteredText = Interaction.InputBox("Enter Folder Name:", "Create new Folder", "New Folder"+DateAndTime.Now);
+            while (string.IsNullOrEmpty(enteredText))
+            {
+                // Hiển thị cảnh báo nếu người dùng không nhập
+                MessageBox.Show("You didn't enter folder name. Please enter a value.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                enteredText = Interaction.InputBox("Enter Folder Name:", "Create new Folder", "");
+            }
+            if(!string.IsNullOrEmpty(enteredText))
+            {
+                progressBar1.Show();
+                progressLabel.Text = "Creating folder..." + enteredText;
+                apiService.CreateEmptyFolder(service, currentLocation, enteredText);
+                createFolderMesssageBox();
+                loadFileFromDrive(apiService.LoadFileFromAParent(currentLocation, service));
+            }
+        }
+        private void createFolderMesssageBox()
+        {
+            progressLabel.Text = "Created Completed!";
+            progressBar1.Value = progressBar1.Maximum;
+            DialogResult result = MessageBox.Show("Create folder sucessfull.", "Alert Message", MessageBoxButtons.OK);
+            // Kiểm tra kết quả
+            if (result == DialogResult.OK)
+            {
+
+                progressLabel.Text = "";
+                progressBar1.Hide();
+                progressBar1.Value = 0;
             }
         }
     }
