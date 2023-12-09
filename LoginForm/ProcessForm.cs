@@ -1137,6 +1137,16 @@ namespace LoginForm
                 progressBar1.Value = 0;
             }
         }
+
+        private void sharingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var listId = new List<string>();
+            foreach(ListViewItem item in listView1.SelectedItems)
+            {
+                listId.Add(item.SubItems[1].Text);
+            }
+            new shareForm(listId,service,apiService).Show();
+        }
     }
 
 }

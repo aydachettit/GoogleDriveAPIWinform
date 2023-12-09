@@ -197,3 +197,4 @@ D:\aydachettit\GoogleDriveAPIWinform\LoginForm\obj\Debug\LoginForm.csproj.CoreCo
 D:\aydachettit\GoogleDriveAPIWinform\LoginForm\obj\Debug\LoginForm.csproj.CopyComplete
 D:\aydachettit\GoogleDriveAPIWinform\LoginForm\obj\Debug\LoginForm.exe
 D:\aydachettit\GoogleDriveAPIWinform\LoginForm\obj\Debug\LoginForm.pdb
+C:\Users\dante\source\repos\aydachettit\GoogleDriveAPIWinform\LoginForm\obj\Debug\LoginForm.shareForm.resources

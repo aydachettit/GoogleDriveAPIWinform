@@ -1368,6 +1368,71 @@ namespace GoogleDriveAPIExample
             // In thông tin về thư mục đã tạo
             Console.WriteLine($"Created folder: {newFolder.Name} (ID: {newFolder.Id})");
         }
+        public void ShareFileOrFolderWithMultipleEmails(DriveService service,string fileId, List<string> emailAddresses, string role)
+        {
+            foreach (var emailAddress in emailAddresses)
+            {
+                ShareFileOrFolder(service,fileId, emailAddress, role);
+            }
+        }
+
+        private void ShareFileOrFolder(DriveService service,string fileId, string emailAddress, string role)
+        {
+            var permission = new Permission
+            {
+                Type = "user",
+                Role = role,
+                EmailAddress = emailAddress,
+            };
+
+            try
+            {
+                var existingPermission = service.Permissions.Get(fileId, emailAddress).Execute();
+                if (existingPermission != null)
+                {
+                    service.Permissions.Update(permission, fileId, emailAddress).Execute();
+                }
+                else
+                {
+                    service.Permissions.Create(permission, fileId).Execute();
+                }
+
+                Console.WriteLine($"File/Folder shared successfully with {emailAddress} with role {role}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sharing file/folder: {ex.Message}");
+            }
+        }
+        public void ShareMultipleFilesWithUser(List<string> fileIds,DriveService service, string emailAddress, string role)
+        {
+            if (role == "all")
+            {
+                role = "owner";
+            }
+            var userPermission = new Permission
+            {
+                Type = "user",
+                Role = role,
+                EmailAddress = emailAddress,
+                
+            };
+
+            try
+            {
+                foreach (var fileId in fileIds)
+                {
+                    // Tạo quyền truy cập cho từng file
+                    var permission = service.Permissions.Create(userPermission, fileId).Execute();
+                   
+                    Console.WriteLine($"File with ID {fileId} shared successfully with {emailAddress} with role {role}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sharing files: {ex.Message}");
+            }
+        }
 
     }
 }
