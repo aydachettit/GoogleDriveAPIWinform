@@ -51,7 +51,10 @@ namespace LoginForm
             logoutButton.Click += LogoutButton_Click;
             logoutButton.Hide();
             this.Controls.Add(logoutButton);
-
+            this.txtSearchFileName.Text = "Enter file name";
+            this.txtSearchFileName.ForeColor = Color.FromArgb(138, 135, 134);
+            this.txtSearchFileName.Font= new System.Drawing.Font("Microsoft Sans Serif",8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            
             apiService = new APIService();
             service = apiService.automatic(labelText);
 
@@ -132,6 +135,9 @@ namespace LoginForm
             internetCheckWorker.RunWorkerAsync();
             ///
             //timer.Start();
+            this.cmbOrderFiled.SelectedIndex = 0;
+            this.cmbOrderType.SelectedIndex = 0;
+            this.btnHome.PerformClick();
         }
 
        
@@ -1146,6 +1152,18 @@ namespace LoginForm
                 listId.Add(item.SubItems[1].Text);
             }
             new shareForm(listId,service,apiService).Show();
+        }
+
+        private void txtSearchFileName_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtSearchFileName_MouseClick(object sender, MouseEventArgs e)
+        {
+            txtSearchFileName.Text = "";
+            this.txtSearchFileName.ForeColor = Color.FromArgb(26,25,25);
+            this.txtSearchFileName.Font= new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         }
     }
 

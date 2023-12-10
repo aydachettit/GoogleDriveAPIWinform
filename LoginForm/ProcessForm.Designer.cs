@@ -31,11 +31,14 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProcessForm));
             this.listView1 = new System.Windows.Forms.ListView();
+            this.contextMenuStrip3 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.createNewFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moveToTrashCanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.downloadToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sharingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -43,6 +46,7 @@
             this.deletePermanentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.labelStatus = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbFileTyle = new System.Windows.Forms.ComboBox();
@@ -53,18 +57,14 @@
             this.cmbOrderType = new System.Windows.Forms.ComboBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.progressLabel = new System.Windows.Forms.Label();
-            this.contextMenuStrip3 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.createNewFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button1 = new System.Windows.Forms.Button();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.btnHome = new System.Windows.Forms.Button();
             this.btnOpenTrashFiles = new System.Windows.Forms.Button();
             this.btnBack = new System.Windows.Forms.Button();
-            this.sharingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip3.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.contextMenuStrip3.SuspendLayout();
             this.SuspendLayout();
             // 
             // listView1
@@ -84,6 +84,20 @@
             this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
             this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
             // 
+            // contextMenuStrip3
+            // 
+            this.contextMenuStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createNewFolderToolStripMenuItem});
+            this.contextMenuStrip3.Name = "contextMenuStrip3";
+            this.contextMenuStrip3.Size = new System.Drawing.Size(168, 26);
+            // 
+            // createNewFolderToolStripMenuItem
+            // 
+            this.createNewFolderToolStripMenuItem.Name = "createNewFolderToolStripMenuItem";
+            this.createNewFolderToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.createNewFolderToolStripMenuItem.Text = "Create new folder";
+            this.createNewFolderToolStripMenuItem.Click += new System.EventHandler(this.createNewFolderToolStripMenuItem_Click);
+            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -94,34 +108,41 @@
             this.downloadToToolStripMenuItem,
             this.sharingToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 114);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // renameToolStripMenuItem
             // 
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.renameToolStripMenuItem.Text = "Rename";
             // 
             // moveToTrashCanToolStripMenuItem
             // 
             this.moveToTrashCanToolStripMenuItem.Name = "moveToTrashCanToolStripMenuItem";
-            this.moveToTrashCanToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.moveToTrashCanToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.moveToTrashCanToolStripMenuItem.Text = "Move to trash can";
             this.moveToTrashCanToolStripMenuItem.Click += new System.EventHandler(this.moveToTrashCanToolStripMenuItem_Click);
             // 
             // downloadToToolStripMenuItem
             // 
             this.downloadToToolStripMenuItem.Name = "downloadToToolStripMenuItem";
-            this.downloadToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.downloadToToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.downloadToToolStripMenuItem.Text = "Download to";
             this.downloadToToolStripMenuItem.Click += new System.EventHandler(this.dowloadToToolStripMenuItem_Click);
+            // 
+            // sharingToolStripMenuItem
+            // 
+            this.sharingToolStripMenuItem.Name = "sharingToolStripMenuItem";
+            this.sharingToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.sharingToolStripMenuItem.Text = "Sharing";
+            this.sharingToolStripMenuItem.Click += new System.EventHandler(this.sharingToolStripMenuItem_Click);
             // 
             // imageList1
             // 
@@ -189,6 +210,17 @@
             this.label4.TabIndex = 11;
             this.label4.Text = "Status:";
             // 
+            // btnSearch
+            // 
+            this.btnSearch.Image = global::LoginForm.Properties.Resources.icons8_search_30;
+            this.btnSearch.Location = new System.Drawing.Point(315, 9);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(46, 34);
+            this.btnSearch.TabIndex = 4;
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
             // labelStatus
             // 
             this.labelStatus.AutoSize = true;
@@ -232,6 +264,8 @@
             this.txtSearchFileName.Size = new System.Drawing.Size(76, 22);
             this.txtSearchFileName.TabIndex = 1;
             this.txtSearchFileName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtSearchFileName.MouseClick += new System.Windows.Forms.MouseEventHandler(this.txtSearchFileName_MouseClick);
+            this.txtSearchFileName.TextChanged += new System.EventHandler(this.txtSearchFileName_TextChanged);
             // 
             // label1
             // 
@@ -298,20 +332,6 @@
             this.progressLabel.Size = new System.Drawing.Size(0, 13);
             this.progressLabel.TabIndex = 12;
             // 
-            // contextMenuStrip3
-            // 
-            this.contextMenuStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.createNewFolderToolStripMenuItem});
-            this.contextMenuStrip3.Name = "contextMenuStrip3";
-            this.contextMenuStrip3.Size = new System.Drawing.Size(168, 26);
-            // 
-            // createNewFolderToolStripMenuItem
-            // 
-            this.createNewFolderToolStripMenuItem.Name = "createNewFolderToolStripMenuItem";
-            this.createNewFolderToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.createNewFolderToolStripMenuItem.Text = "Create new folder";
-            this.createNewFolderToolStripMenuItem.Click += new System.EventHandler(this.createNewFolderToolStripMenuItem_Click);
-            // 
             // button1
             // 
             this.button1.Image = global::LoginForm.Properties.Resources.icons8_share_24;
@@ -321,17 +341,6 @@
             this.button1.TabIndex = 10;
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // btnSearch
-            // 
-            this.btnSearch.Image = global::LoginForm.Properties.Resources.icons8_search_30;
-            this.btnSearch.Location = new System.Drawing.Point(315, 9);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(46, 34);
-            this.btnSearch.TabIndex = 4;
-            this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // btnHome
             // 
@@ -365,13 +374,6 @@
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
-            // sharingToolStripMenuItem
-            // 
-            this.sharingToolStripMenuItem.Name = "sharingToolStripMenuItem";
-            this.sharingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.sharingToolStripMenuItem.Text = "Sharing";
-            this.sharingToolStripMenuItem.Click += new System.EventHandler(this.sharingToolStripMenuItem_Click);
-            // 
             // ProcessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -395,11 +397,11 @@
             this.Text = "ProcessForm";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ProcessForm_FormClosed);
             this.Load += new System.EventHandler(this.ProcessForm_Load);
+            this.contextMenuStrip3.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
             this.contextMenuStrip2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.contextMenuStrip3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
