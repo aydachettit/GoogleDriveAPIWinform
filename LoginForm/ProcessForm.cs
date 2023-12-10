@@ -51,10 +51,7 @@ namespace LoginForm
             logoutButton.Click += LogoutButton_Click;
             logoutButton.Hide();
             this.Controls.Add(logoutButton);
-            this.txtSearchFileName.Text = "Enter file name";
-            this.txtSearchFileName.ForeColor = Color.FromArgb(138, 135, 134);
-            this.txtSearchFileName.Font= new System.Drawing.Font("Microsoft Sans Serif",8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            
+           
             apiService = new APIService();
             service = apiService.automatic(labelText);
 
@@ -134,7 +131,7 @@ namespace LoginForm
             // Bắt đầu kiểm tra liên tục
             internetCheckWorker.RunWorkerAsync();
             ///
-            //timer.Start();
+            ////timer.Start();
             this.cmbOrderFiled.SelectedIndex = 0;
             this.cmbOrderType.SelectedIndex = 0;
             this.btnHome.PerformClick();
@@ -882,7 +879,7 @@ namespace LoginForm
 
         private void btnHome_Click(object sender, EventArgs e)
         {
-            this.listView1.ContextMenuStrip = this.contextMenuStrip1;
+            //this.listView1.ContextMenuStrip = this.contextMenuStrip1;
             IList<Google.Apis.Drive.v3.Data.File> files = apiService.LoadFilesFromRootFolder(service, null);
             pre_current_ids = new List<string>();
             pre_current_ids.Add("root");

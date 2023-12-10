@@ -258,11 +258,14 @@
             // 
             // txtSearchFileName
             // 
+            this.txtSearchFileName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSearchFileName.ForeColor = System.Drawing.SystemColors.ScrollBar;
             this.txtSearchFileName.Location = new System.Drawing.Point(74, 19);
             this.txtSearchFileName.Margin = new System.Windows.Forms.Padding(2);
             this.txtSearchFileName.Name = "txtSearchFileName";
-            this.txtSearchFileName.Size = new System.Drawing.Size(76, 22);
+            this.txtSearchFileName.Size = new System.Drawing.Size(76, 20);
             this.txtSearchFileName.TabIndex = 1;
+            this.txtSearchFileName.Text = "Enter file name";
             this.txtSearchFileName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtSearchFileName.MouseClick += new System.Windows.Forms.MouseEventHandler(this.txtSearchFileName_MouseClick);
             this.txtSearchFileName.TextChanged += new System.EventHandler(this.txtSearchFileName_TextChanged);
