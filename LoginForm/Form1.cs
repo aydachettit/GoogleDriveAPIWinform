@@ -43,6 +43,7 @@ namespace LoginForm
                         label.Text = line.ToUpper();
                         label.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
                         label.Click += new EventHandler(click_label);
+                        label.Cursor= System.Windows.Forms.Cursors.Hand;
                         Button closeButton = new Button();
                         closeButton.Text = "X";
                         closeButton.Tag = label; // Lưu trữ label tương ứng trong Tag của nút
